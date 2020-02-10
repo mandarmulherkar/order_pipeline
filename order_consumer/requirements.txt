@@ -1,0 +1,5 @@
+psycopg2>=2.7,<3.0
+flask
+kafka-python
+redis
+kafka >= 0.9.0.0
