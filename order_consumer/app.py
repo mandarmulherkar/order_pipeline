@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 from kafka import KafkaConsumer
 from redis import Redis
 import os
@@ -7,6 +8,8 @@ import json
 import logging
 
 app = Flask(__name__)
+db = SQLAlchemy(app)
+
 redis = Redis(host='redis', port=6379)
 KAFKA_BROKER_URL = os.environ.get('KAFKA_BROKER_URL')
 TRANSACTIONS_TOPIC = os.environ.get('TRANSACTIONS_TOPIC')

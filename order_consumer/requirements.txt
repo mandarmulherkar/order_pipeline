@@ -1,5 +1,7 @@
 psycopg2>=2.7,<3.0
-flask
 kafka-python
 redis
-kafka >= 0.9.0.0
+Flask==1.1.1
+Flask-SQLAlchemy==2.4.1
+Flask-Migrate==2.5.2
+Flask-Script
