@@ -31,7 +31,7 @@ if __name__ == "__main__":
                                      )
             break
         except NoBrokersAvailable:
-            print("Will try to connect to kafka again")
+            print("Waiting for kafka...")
 
     i = 0
     while True:

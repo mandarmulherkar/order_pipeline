@@ -9,6 +9,7 @@ import os
 import json
 import logging
 import ast
+from datetime import datetime
 
 app = Flask(__name__)
 app.config.from_object("config.Config")
@@ -27,6 +28,7 @@ class CssOrder(db.Model):
     service = db.Column(db.String())
     status = db.Column(db.String())
     ordered_at = db.Column(db.Date())
+    created_at = db.Column(db.Date(), default=datetime.utcnow)
 
     def __init__(self, name, service, ordered_at, status=CssConstants.ORDER_RECEIVED):
         self.name = name
@@ -38,32 +40,23 @@ class CssOrder(db.Model):
         return '<id {}>'.format(self.id)
 
 
-class Result(db.Model):
-    __tablename__ = 'results'
+class Items(db.Model):
+    __tablename__ = 'order_items'
 
     id = db.Column(db.Integer, primary_key=True)
-    url = db.Column(db.String())
-    result_all = db.Column(JSON)
-    result_no_stop_words = db.Column(JSON)
+    order_id = db.Column(db.Integer, db.ForeignKey('received_orders.id'))
+    name = db.Column(db.String())
+    price_per_unit = db.Column(db.Integer)
+    quantity = db.Column(db.Integer)
+    created_at = db.Column(db.Date(), default=datetime.utcnow)
 
-    def __init__(self, url, result_all, result_no_stop_words):
-        self.url = url
-        self.result_all = result_all
-        self.result_no_stop_words = result_no_stop_words
+    def __init__(self, name, price_per_unit, quantity):
+        self.name = name
+        self.price_per_unit = price_per_unit
+        self.quantity = quantity
 
     def __repr__(self):
-        return '<id {}>'.format(self.id)
-
-
-class User(db.Model):
-    __tablename__ = "users"
-
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(128), unique=True, nullable=False)
-    active = db.Column(db.Boolean(), default=True, nullable=False)
-
-    def __init__(self, email):
-        self.email = email
+        return '<order_id: {}, id {}>'.format(self.order_id, self.id)
 
 
 @app.route('/')
@@ -92,6 +85,6 @@ if __name__ == "__main__":
                 db.session.add(css_order)
                 db.session.commit()
         except TypeError:
-            print("Trying to read kafka...")
+            print("Waiting for kafka...")
 
     app.run(host="0.0.0.0", debug=True)

@@ -3,6 +3,8 @@ version: '3'
 services:
   db:
     image: postgres:12.0-alpine
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/1-init.sql
     environment:
       POSTGRES_DB: orders
       POSTGRES_USER: postgres
@@ -34,7 +36,6 @@ services:
       - "5001:5000"
     volumes:
       - .:/app
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     depends_on:
       - broker
       - zookeeper
