@@ -4,9 +4,11 @@ from flask_sqlalchemy import SQLAlchemy
 from kafka import KafkaConsumer
 from redis import Redis
 from sqlalchemy.dialects.postgresql import JSON
+from models.css_constants import CssConstants
 import os
 import json
 import logging
+import ast
 
 app = Flask(__name__)
 app.config.from_object("config.Config")
@@ -15,6 +17,25 @@ db = SQLAlchemy(app)
 redis = Redis(host='redis', port=6379)
 KAFKA_BROKER_URL = os.environ.get('KAFKA_BROKER_URL')
 TRANSACTIONS_TOPIC = os.environ.get('TRANSACTIONS_TOPIC')
+
+
+class CssOrder(db.Model):
+    __tablename__ = 'received_orders'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String())
+    service = db.Column(db.String())
+    status = db.Column(db.String())
+    ordered_at = db.Column(db.Date())
+
+    def __init__(self, name, service, ordered_at, status=CssConstants.ORDER_RECEIVED):
+        self.name = name
+        self.service = service
+        self.ordered_at = ordered_at
+        self.status = status
+
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
 
 
 class Result(db.Model):
@@ -65,7 +86,11 @@ if __name__ == "__main__":
             for message in consumer:
                 order: dict = message.value
                 logging.info("Received message {}".format(message))
-                print(order)
+                json_order = ast.literal_eval(message.value)
+                print(json_order)
+                css_order = CssOrder(json_order['name'], json_order['service'], json_order['ordered_at'])
+                db.session.add(css_order)
+                db.session.commit()
         except TypeError:
             print("Trying to read kafka...")
 
