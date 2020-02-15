@@ -3,7 +3,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from kafka import KafkaConsumer
 from redis import Redis
-from sqlalchemy.dialects.postgresql import JSON
+from rq import Queue
 from models.css_constants import CssConstants
 import os
 import json
@@ -14,6 +14,9 @@ from datetime import datetime
 app = Flask(__name__)
 app.config.from_object("config.Config")
 db = SQLAlchemy(app)
+
+redis_conn = Redis(host='redis')
+q = Queue('order_queue', connection=redis_conn)
 
 redis = Redis(host='redis', port=6379)
 KAFKA_BROKER_URL = os.environ.get('KAFKA_BROKER_URL')
@@ -27,8 +30,8 @@ class CssOrder(db.Model):
     name = db.Column(db.String())
     service = db.Column(db.String())
     status = db.Column(db.String())
-    ordered_at = db.Column(db.Date())
-    created_at = db.Column(db.Date(), default=datetime.utcnow)
+    ordered_at = db.Column(db.DateTime())
+    created_at = db.Column(db.DateTime(), default=datetime.utcnow)
 
     def __init__(self, name, service, ordered_at, status=CssConstants.ORDER_RECEIVED):
         self.name = name
@@ -40,7 +43,7 @@ class CssOrder(db.Model):
         return '<id {}>'.format(self.id)
 
 
-class Items(db.Model):
+class Item(db.Model):
     __tablename__ = 'order_items'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -48,9 +51,10 @@ class Items(db.Model):
     name = db.Column(db.String())
     price_per_unit = db.Column(db.Integer)
     quantity = db.Column(db.Integer)
-    created_at = db.Column(db.Date(), default=datetime.utcnow)
+    created_at = db.Column(db.DateTime(), default=datetime.utcnow)
 
-    def __init__(self, name, price_per_unit, quantity):
+    def __init__(self, order_id, name, price_per_unit, quantity):
+        self.order_id = order_id
         self.name = name
         self.price_per_unit = price_per_unit
         self.quantity = quantity
@@ -84,6 +88,22 @@ if __name__ == "__main__":
                 css_order = CssOrder(json_order['name'], json_order['service'], json_order['ordered_at'])
                 db.session.add(css_order)
                 db.session.commit()
+                print("#############################")
+                print("## {}".format(css_order.id))
+                print("## {}".format(css_order.name))
+                print("#############################")
+
+                json_order_items = json_order['items']
+                for item in json_order_items:
+                    item = Item(css_order.id, item['name'], item['price_per_unit'], item['quantity'])
+                    db.session.add(item)
+                    db.session.commit()
+
+                print("###################################")
+                job = q.enqueue('process', css_order.id)
+                print("## {}".format(job))
+                print("###################################")
+
         except TypeError:
             print("Waiting for kafka...")
 
