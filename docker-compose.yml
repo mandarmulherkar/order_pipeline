@@ -33,35 +33,35 @@ services:
   order_consumer:
     build: ./order_consumer
     ports:
-      - "5001:5000"
-    volumes:
-      - .:/app
+      - "5001:80"
+#    volumes:
+#      - .:/app
     depends_on:
       - broker
       - zookeeper
       - db
-    env_file:
-      - ./order_consumer/.env.dev
+#    env_file:
+#      - ./order_consumer_old/.env.dev
     environment:
       KAFKA_BROKER_URL: broker:9092
       TRANSACTIONS_TOPIC: queueing.orders
       REDIS_URL: redis://redis:6379
       DATABASE_URL: postgresql://postgres:postgres@db:5432/orders
       APP_SETTINGS: config:DevelopmentConfig
-  order_processor:
-    build: ./order_processor
-    ports:
-      - "5003:8080"
-    volumes:
-      - .:/processor
-    depends_on:
-      - broker
-      - zookeeper
-      - db
-    environment:
-      KAFKA_BROKER_URL: broker:9092
-      TRANSACTIONS_TOPIC: queueing.orders
-      REDIS_URL: redis://redis:6379
+#  order_processor:
+#    build: ./order_processor
+#    ports:
+#      - "5003:8080"
+#    volumes:
+#      - .:/processor
+#    depends_on:
+#      - broker
+#      - zookeeper
+#      - db
+#    environment:
+#      KAFKA_BROKER_URL: broker:9092
+#      TRANSACTIONS_TOPIC: queueing.orders
+#      REDIS_URL: redis://redis:6379
   #  order_producer:
   #    build: ./order_producer
   #    environment:

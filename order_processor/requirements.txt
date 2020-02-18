@@ -1,2 +1,4 @@
 redis
-flask
+Flask==1.1.1
+rq==1.2.2
+

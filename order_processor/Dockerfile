@@ -1,10 +1,18 @@
 FROM nginx
+# RUN apt-get clean \
+#     && apt-get -y update
+#
+# RUN apt-get -y install nginx \
+#     && apt-get -y install python3-dev \
+#     && apt-get -y install build-essential
 
+
+ARG DEBIAN_FRONTEND=noninteractive
 ENV HOME=/app
 
 # install python, uwsgi, and supervisord
 RUN apt-get update && apt-get install -y supervisor uwsgi python3 python-pip procps vim && \
-    /usr/bin/pip install uwsgi==2.0.17 flask==1.0.2
+    /usr/bin/pip install uwsgi==2.0.17
 
 # Source code file
 RUN pwd
@@ -48,7 +56,6 @@ RUN chgrp -R 0 /var/log /var/cache /run/pid /spool/nginx /var/run /run /tmp /etc
 # enter
 WORKDIR ${HOME}
 COPY requirements.txt /app/
-RUN pip install -U pip
 RUN pip --no-cache-dir install -r requirements.txt
 
 ENTRYPOINT ["docker-entrypoint.sh"]

@@ -1,11 +1,17 @@
 from flask import Flask
 from redis import Redis
-import os
+from rq import Queue
 
 app = Flask(__name__)
 redis = Redis(host='redis', port=6379)
-KAFKA_BROKER_URL = os.environ.get('KAFKA_BROKER_URL')
-TRANSACTIONS_TOPIC = os.environ.get('TRANSACTIONS_TOPIC')
+q = Queue('order_queue', connection=redis)
+
+
+# KAFKA_BROKER_URL = os.environ.get('KAFKA_BROKER_URL')
+# TRANSACTIONS_TOPIC = os.environ.get('TRANSACTIONS_TOPIC')
+class Job:
+    def process(id):
+        print(">>>>> {} <<<<<".format(id))
 
 
 @app.route('/')
