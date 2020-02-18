@@ -1,17 +1,28 @@
-FROM python:3.8.0-alpine
-RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev
+FROM python:3.6
 
-ENV PYTHONUNBUFFERED 1
-ENV PYTHONDONTWRITEBYTECODE 1
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends \
+        libatlas-base-dev gfortran nginx supervisor
 
-ENV DATABASE_URL postgresql://postgres:postgres@db:5432/orders
-ENV APP_SETTINGS config:DevelopmentConfig
-RUN mkdir /code
-WORKDIR /code
-RUN pip install --upgrade pip
-COPY requirements.txt /code/
-RUN pip install -r requirements.txt
-COPY . /code/
+RUN pip3 install uwsgi
 
-CMD ["/bin/sh", "/code/start.sh"]
+COPY ./requirements.txt /project/requirements.txt
 
+RUN pip3 install -r /project/requirements.txt
+
+RUN useradd --no-create-home nginx
+
+RUN rm /etc/nginx/sites-enabled/default
+RUN rm -r /root/.cache
+
+COPY server-conf/nginx.conf /etc/nginx/
+COPY server-conf/flask-site-nginx.conf /etc/nginx/conf.d/
+COPY server-conf/uwsgi.ini /etc/uwsgi/
+COPY server-conf/supervisord.conf /etc/supervisor/
+
+COPY src /project/src
+
+WORKDIR /project
+RUN export PYTHONPATH="${PYTHONPATH}:/project"
+
+CMD ["/usr/bin/supervisord"]
