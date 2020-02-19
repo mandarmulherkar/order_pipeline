@@ -10,6 +10,20 @@ import os
 import json
 import logging
 import ast
+from sys import modules
+from os.path import basename, splitext
+
+
+def enqueueable(func):
+    if func.__module__ == "__main__":
+        func.__module__, _ = splitext(basename(modules["__main__"].__file__))
+    return func
+
+
+@enqueueable
+def process(order_id):
+    print(">>>>>>>>>>>>>>> RQ Processing item {}".format(order_id))
+
 
 app = Flask(__name__)
 app.config.from_object("config.Config")
@@ -28,7 +42,7 @@ class CssConstants:
 
 
 class CssOrder(db.Model):
-    __tablename__ = 'received_orders'
+    __tablename__ = 'received_order'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String())
@@ -47,11 +61,26 @@ class CssOrder(db.Model):
         return '<id {}>'.format(self.id)
 
 
-class Item(db.Model):
-    __tablename__ = 'order_items'
+class MenuItem(db.Model):
+    __tablename__ = 'menu_item'
 
     id = db.Column(db.Integer, primary_key=True)
-    order_id = db.Column(db.Integer, db.ForeignKey('received_orders.id'))
+    cook_time = db.Column(db.Integer)
+    name = db.Column(db.String())
+
+    def __init__(self, name, cook_time):
+        self.cook_time = cook_time
+        self.name = name
+
+    def __repr__(self):
+        return '<name: {}, cook_time {}>'.format(self.name, self.cook_time)
+
+
+class OrderItem(db.Model):
+    __tablename__ = 'order_item'
+
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('received_order.id'))
     name = db.Column(db.String())
     price_per_unit = db.Column(db.Integer)
     quantity = db.Column(db.Integer)
@@ -68,8 +97,6 @@ class Item(db.Model):
 
 
 def setup_database():
-    print("Boooooooooooooommmmm booooommmmmmmm")
-
     """ Connect to the PostgreSQL database server """
     conn = None
     try:
@@ -82,8 +109,9 @@ def setup_database():
         cur = conn.cursor()
 
         query = """
-            DROP TABLE IF EXISTS items CASCADE;
-            DROP TABLE IF EXISTS received_orders CASCADE;
+            DROP TABLE IF EXISTS order_item CASCADE;
+            DROP TABLE IF EXISTS received_order CASCADE;
+            DROP TABLE IF EXISTS menu_item CASCADE;
         """
         print(query)
         cur.execute(query)
@@ -103,8 +131,18 @@ def setup_database():
 
 
 if __name__ == "__main__":
-    print("consumer >>>>>>> I am in CONSUMERRRRRRRRRRRRRRRR")
+    print("consumer >> I am in CONSUMER")
     if setup_database():
+
+        # First, set up the menu items.
+        with open('src/data/items.json') as f:
+            menu_items = json.load(f)
+
+        for menu_item in menu_items:
+            print("Adding menu item {}".format(menu_item['name']))
+            new_menu_item = MenuItem(menu_item['name'], menu_item['cook_time'])
+            db.session.add(new_menu_item)
+            db.session.commit()
 
         while True:
             try:
@@ -132,12 +170,12 @@ if __name__ == "__main__":
 
                     json_order_items = json_order['items']
                     for item in json_order_items:
-                        item = Item(css_order.id, item['name'], item['price_per_unit'], item['quantity'])
+                        item = OrderItem(css_order.id, item['name'], item['price_per_unit'], item['quantity'])
                         db.session.add(item)
                         db.session.commit()
 
                     print("###################################")
-                    job = q.enqueue('process', css_order.id)
+                    job = q.enqueue('job_worker.process', css_order.id)
                     print("## {}".format(job))
                     print("###################################")
 

@@ -25,7 +25,7 @@ TRANSACTIONS_TOPIC = os.environ.get('TRANSACTIONS_TOPIC')
 
 
 class CssOrder(db.Model):
-    __tablename__ = 'received_orders'
+    __tablename__ = 'received_order'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String())
@@ -45,10 +45,10 @@ class CssOrder(db.Model):
 
 
 class Item(db.Model):
-    __tablename__ = 'order_items'
+    __tablename__ = 'order_item'
 
     id = db.Column(db.Integer, primary_key=True)
-    order_id = db.Column(db.Integer, db.ForeignKey('received_orders.id'))
+    order_id = db.Column(db.Integer, db.ForeignKey('received_order.id'))
     name = db.Column(db.String())
     price_per_unit = db.Column(db.Integer)
     quantity = db.Column(db.Integer)
