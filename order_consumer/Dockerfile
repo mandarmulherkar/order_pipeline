@@ -26,6 +26,6 @@ COPY server-conf/supervisord.conf /etc/supervisor/
 COPY src /project/src
 
 WORKDIR /project
-RUN export PYTHONPATH="${PYTHONPATH}:/project"
+# RUN export PYTHONPATH="${PYTHONPATH}:/project"
 
 CMD ["/usr/bin/supervisord"]

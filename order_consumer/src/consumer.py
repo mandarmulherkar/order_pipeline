@@ -13,24 +13,25 @@ import ast
 from sys import modules
 from os.path import basename, splitext
 
+from job_worker import JobWorker
 
-def enqueueable(func):
-    if func.__module__ == "__main__":
-        func.__module__, _ = splitext(basename(modules["__main__"].__file__))
-    return func
-
-
-@enqueueable
-def process(order_id):
-    print(">>>>>>>>>>>>>>> RQ Processing item {}".format(order_id))
-
+# def enqueueable(func):
+#     if func.__module__ == "__main__":
+#         func.__module__, _ = splitext(basename(modules["__main__"].__file__))
+#     return func
+#
+#
+# @enqueueable
+# def process(order_id):
+#     print(">>>>>>>>>>>>>>> RQ Processing item {}".format(order_id))
+#
 
 app = Flask(__name__)
 app.config.from_object("config.Config")
 db = SQLAlchemy(app)
 
 redis_conn = Redis(host='redis')
-q = Queue('order_queue', connection=redis_conn)
+q = Queue('order_queue', connection=redis_conn, is_async=False)
 
 redis = Redis(host='redis', port=6379)
 KAFKA_BROKER_URL = os.environ.get('KAFKA_BROKER_URL')
@@ -170,12 +171,18 @@ if __name__ == "__main__":
 
                     json_order_items = json_order['items']
                     for item in json_order_items:
-                        item = OrderItem(css_order.id, item['name'], item['price_per_unit'], item['quantity'])
-                        db.session.add(item)
+                        order_item = OrderItem(css_order.id, item['name'], item['price_per_unit'], item['quantity'])
+                        db.session.add(order_item)
                         db.session.commit()
+                        menu_item = MenuItem.query.filter_by(name=item['name']).first()
+
+                        print("###################################")
+                        job = q.enqueue(JobWorker.process_item, order_item.id, item['quantity'], menu_item.cook_time, menu_item.name)
+                        print("## {}".format(job))
+                        print("###################################")
 
                     print("###################################")
-                    job = q.enqueue('job_worker.process', css_order.id)
+                    job = q.enqueue(JobWorker.process, css_order.id)
                     print("## {}".format(job))
                     print("###################################")
 
