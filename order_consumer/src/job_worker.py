@@ -15,4 +15,4 @@ class JobWorker:
         total_cook_time = int(quantity) * int(cook_time)
         print("Cooking for {}...".format(total_cook_time))
         sleep(total_cook_time / 100)
-        print("{} is ready!".format(name))
+        print("{} x {} ready!".format(quantity, name))
