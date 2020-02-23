@@ -95,5 +95,30 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
+  appseed-app:
+    restart: always
+    env_file: ./flask-dashboard/.env
+    build: ./flask-dashboard
+    ports:
+      - "5005:5005"
+    networks:
+      - db_network
+      - web_network
+  nginx:
+    restart: always
+    image: "nginx:latest"
+    ports:
+      - "85:85"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    networks:
+      - web_network
+    depends_on:
+      - appseed-app
+networks:
+  db_network:
+    driver: bridge
+  web_network:
+    driver: bridge
 #volumes:
 #  postgres_data:
