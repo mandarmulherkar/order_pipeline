@@ -14,6 +14,10 @@ from sys import modules
 from os.path import basename, splitext
 
 from job_worker import JobWorker
+from wsgi import app, db
+from css_order import CssOrder
+from menu_item import MenuItem
+from order_item import OrderItem
 
 # def enqueueable(func):
 #     if func.__module__ == "__main__":
@@ -26,9 +30,9 @@ from job_worker import JobWorker
 #     print(">>>>>>>>>>>>>>> RQ Processing item {}".format(order_id))
 #
 
-app = Flask(__name__)
-app.config.from_object("config.Config")
-db = SQLAlchemy(app)
+# app = Flask(__name__)
+# app.config.from_object("config.Config")
+# db = SQLAlchemy(app)
 
 redis_conn = Redis(host='redis')
 q = Queue('order_queue', connection=redis_conn, is_async=False)
@@ -38,63 +42,65 @@ KAFKA_BROKER_URL = os.environ.get('KAFKA_BROKER_URL')
 TRANSACTIONS_TOPIC = os.environ.get('TRANSACTIONS_TOPIC')
 
 
-class CssConstants:
-    ORDER_RECEIVED = "order_received"
+# class CssConstants:
+#     ORDER_RECEIVED = "order_received"
 
 
-class CssOrder(db.Model):
-    __tablename__ = 'received_order'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String())
-    service = db.Column(db.String())
-    status = db.Column(db.String())
-    ordered_at = db.Column(db.DateTime())
-    created_at = db.Column(db.DateTime(), default=datetime.utcnow)
-
-    def __init__(self, name, service, ordered_at, status=CssConstants.ORDER_RECEIVED):
-        self.name = name
-        self.service = service
-        self.ordered_at = datetime.strptime(ordered_at, "%Y-%m-%dT%H:%M:%S")
-        self.status = status
-
-    def __repr__(self):
-        return '<id {}>'.format(self.id)
-
-
-class MenuItem(db.Model):
-    __tablename__ = 'menu_item'
-
-    id = db.Column(db.Integer, primary_key=True)
-    cook_time = db.Column(db.Integer)
-    name = db.Column(db.String())
-
-    def __init__(self, name, cook_time):
-        self.cook_time = cook_time
-        self.name = name
-
-    def __repr__(self):
-        return '<name: {}, cook_time {}>'.format(self.name, self.cook_time)
+# class CssOrder(db.Model):
+#     __tablename__ = 'received_order'
+#
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String())
+#     service = db.Column(db.String())
+#     status = db.Column(db.String())
+#     items_in_order = db.Column(db.Integer())
+#     ordered_at = db.Column(db.DateTime())
+#     created_at = db.Column(db.DateTime(), default=datetime.utcnow)
+#
+#     def __init__(self, name, service, items_in_order, ordered_at, status=CssConstants.ORDER_RECEIVED):
+#         self.name = name
+#         self.service = service
+#         self.items_in_order = items_in_order
+#         self.ordered_at = datetime.strptime(ordered_at, "%Y-%m-%dT%H:%M:%S")
+#         self.status = status
+#
+#     def __repr__(self):
+#         return '<id {}>'.format(self.id)
 
 
-class OrderItem(db.Model):
-    __tablename__ = 'order_item'
+# class MenuItem(db.Model):
+#     __tablename__ = 'menu_item'
+#
+#     id = db.Column(db.Integer, primary_key=True)
+#     cook_time = db.Column(db.Integer)
+#     name = db.Column(db.String())
+#
+#     def __init__(self, name, cook_time):
+#         self.cook_time = cook_time
+#         self.name = name
+#
+#     def __repr__(self):
+#         return '<name: {}, cook_time {}>'.format(self.name, self.cook_time)
 
-    id = db.Column(db.Integer, primary_key=True)
-    order_id = db.Column(db.Integer, db.ForeignKey('received_order.id'))
-    name = db.Column(db.String())
-    price_per_unit = db.Column(db.Integer)
-    quantity = db.Column(db.Integer)
-    created_at = db.Column(db.DateTime(), default=datetime.utcnow)
 
-    def __init__(self, order_id, name, price_per_unit, quantity):
-        self.order_id = order_id
-        self.name = name
-        self.price_per_unit = price_per_unit
-        self.quantity = quantity
-
-    def __repr__(self):
-        return '<order_id: {}, id {}>'.format(self.order_id, self.id)
+# class OrderItem(db.Model):
+#     __tablename__ = 'order_item'
+#
+#     id = db.Column(db.Integer, primary_key=True)
+#     order_id = db.Column(db.Integer, db.ForeignKey('received_order.id'))
+#     name = db.Column(db.String())
+#     price_per_unit = db.Column(db.Integer)
+#     quantity = db.Column(db.Integer)
+#     created_at = db.Column(db.DateTime(), default=datetime.utcnow)
+#
+#     def __init__(self, order_id, name, price_per_unit, quantity):
+#         self.order_id = order_id
+#         self.name = name
+#         self.price_per_unit = price_per_unit
+#         self.quantity = quantity
+#
+#     def __repr__(self):
+#         return '<order_id: {}, id {}>'.format(self.order_id, self.id)
 
 
 def setup_database():
@@ -161,7 +167,11 @@ if __name__ == "__main__":
                     logging.info("Received message {}".format(message))
                     json_order = ast.literal_eval(message.value)
                     print(json_order)
-                    css_order = CssOrder(json_order['name'], json_order['service'], json_order['ordered_at'])
+                    # Items from the order
+                    json_order_items = json_order['items']
+                    items_in_order = len(json_order_items)
+                    css_order = CssOrder(json_order['name'], json_order['service'], items_in_order,
+                                         json_order['ordered_at'])
                     db.session.add(css_order)
                     db.session.commit()
                     print("#############################")
@@ -169,7 +179,6 @@ if __name__ == "__main__":
                     print("## {}".format(css_order.name))
                     print("#############################")
 
-                    json_order_items = json_order['items']
                     for item in json_order_items:
                         order_item = OrderItem(css_order.id, item['name'], item['price_per_unit'], item['quantity'])
                         db.session.add(order_item)
@@ -177,7 +186,9 @@ if __name__ == "__main__":
                         menu_item = MenuItem.query.filter_by(name=item['name']).first()
 
                         print("###################################")
-                        job = q.enqueue(JobWorker.process_item, order_item.id, item['quantity'], menu_item.cook_time, menu_item.name)
+                        job = q.enqueue(JobWorker.process_item, css_order.id, order_item.id, item['quantity'],
+                                        menu_item.cook_time,
+                                        menu_item.name)
                         print("## {}".format(job))
                         print("###################################")
 
