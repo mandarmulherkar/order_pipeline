@@ -14,6 +14,7 @@ class CssOrder(db.Model):
     completed_items_in_order = db.Column(db.Integer())
     ordered_at = db.Column(db.DateTime())
     created_at = db.Column(db.DateTime(), default=datetime.utcnow)
+    completed_at = db.Column(db.DateTime(), default=None)
 
     def __init__(self, name, service, items_in_order, ordered_at, status=CssConstants.ORDER_RECEIVED,
                  completed_items_in_order=0):

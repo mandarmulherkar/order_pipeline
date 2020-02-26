@@ -5,11 +5,11 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 import os
-from   os import environ
+from os import environ
+
 
 class Config(object):
-
-    basedir    = os.path.abspath(os.path.dirname(__file__))
+    basedir = os.path.abspath(os.path.dirname(__file__))
 
     SECRET_KEY = 'S3cretKey_7655'
 
@@ -39,11 +39,11 @@ class ProductionConfig(Config):
 
     # PostgreSQL database
     SQLALCHEMY_DATABASE_URI = 'postgresql://{}:{}@{}:{}/{}'.format(
-        environ.get('APPSEED_DATABASE_USER', 'appseed'),
-        environ.get('APPSEED_DATABASE_PASSWORD', 'appseed'),
+        environ.get('APPSEED_DATABASE_USER', 'postgres'),
+        environ.get('APPSEED_DATABASE_PASSWORD', 'postgres'),
         environ.get('APPSEED_DATABASE_HOST', 'db'),
         environ.get('APPSEED_DATABASE_PORT', 5432),
-        environ.get('APPSEED_DATABASE_NAME', 'appseed')
+        environ.get('APPSEED_DATABASE_NAME', 'orders')
     )
 
 

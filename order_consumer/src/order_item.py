@@ -13,7 +13,7 @@ class OrderItem(db.Model):
     quantity = db.Column(db.Integer)
     status = db.Column(db.String())
     created_at = db.Column(db.DateTime(), default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime(), default=datetime.utcnow)
+    completed_at = db.Column(db.DateTime(), default=None)
 
     def __init__(self, order_id, name, price_per_unit, quantity, status=CssConstants.ORDER_RECEIVED):
         self.order_id = order_id

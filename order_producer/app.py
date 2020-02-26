@@ -45,4 +45,4 @@ if __name__ == "__main__":
         except NoBrokersAvailable:
             print("Will try again")
 
-    app.run(host="0.0.0.0", debug=True)
+    # app.run(host="0.0.0.0", debug=True)

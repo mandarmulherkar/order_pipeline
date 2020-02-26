@@ -101,9 +101,11 @@ services:
     build: ./flask-dashboard
     ports:
       - "5005:5005"
-    networks:
-      - db_network
-      - web_network
+    depends_on:
+      - db
+#    networks:
+##      - db_network
+#      - web_network
   nginx:
     restart: always
     image: "nginx:latest"
@@ -111,14 +113,14 @@ services:
       - "85:85"
     volumes:
       - ./nginx:/etc/nginx/conf.d
-    networks:
-      - web_network
+#    networks:
+#      - web_network
     depends_on:
       - appseed-app
-networks:
-  db_network:
-    driver: bridge
-  web_network:
-    driver: bridge
+#networks:
+##  db_network:
+##    driver: bridge
+#  web_network:
+#    driver: bridge
 #volumes:
 #  postgres_data:

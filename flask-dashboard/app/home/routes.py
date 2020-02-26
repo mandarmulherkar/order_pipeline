@@ -9,19 +9,23 @@ from flask import render_template, redirect, url_for
 from flask_login import login_required, current_user
 from app import login_manager
 from jinja2 import TemplateNotFound
+import requests
+
 
 @blueprint.route('/index')
 @login_required
 def index():
-    
     if not current_user.is_authenticated:
         return redirect(url_for('base_blueprint.login'))
 
-    return render_template('index.html')
+    res = requests.get('http://localhost:5001/')
+    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    print(res.content)
+    return render_template('index.html', message=res.content)
+
 
 @blueprint.route('/<template>')
 def route_template(template):
-
     if not current_user.is_authenticated:
         return redirect(url_for('base_blueprint.login'))
 
@@ -31,6 +35,6 @@ def route_template(template):
 
     except TemplateNotFound:
         return render_template('error-404.html'), 404
-    
+
     except:
         return render_template('error-500.html'), 500

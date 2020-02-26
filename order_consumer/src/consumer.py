@@ -169,7 +169,10 @@ if __name__ == "__main__":
                     print(json_order)
                     # Items from the order
                     json_order_items = json_order['items']
-                    items_in_order = len(json_order_items)
+                    items_in_order = 0
+                    for item in json_order_items:
+                        items_in_order = items_in_order + int(item['quantity'])
+
                     css_order = CssOrder(json_order['name'], json_order['service'], items_in_order,
                                          json_order['ordered_at'])
                     db.session.add(css_order)
