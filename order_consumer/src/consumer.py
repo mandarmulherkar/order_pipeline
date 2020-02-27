@@ -10,6 +10,7 @@ import os
 import json
 import logging
 import ast
+import threading
 from sys import modules
 from os.path import basename, splitext
 
@@ -39,6 +40,8 @@ redis_conn = Redis(host='redis', port=6379)
 q = Queue('order_queue', connection=redis_conn)
 
 redis = Redis(host='redis', port=6379)
+# Do not want workers to pick up old jobs, since these have id arguments.
+redis.flushall()
 KAFKA_BROKER_URL = os.environ.get('KAFKA_BROKER_URL')
 TRANSACTIONS_TOPIC = os.environ.get('TRANSACTIONS_TOPIC')
 
@@ -133,9 +136,19 @@ def setup_database():
             conn.close()
             print('Database connection closed.')
 
+    db.drop_all()
     db.create_all()
 
     return True
+
+
+def start_new_thread(function):
+    def decorator(*args, **kwargs):
+        t = threading.Thread(target=function, args=args, kwargs=kwargs)
+        t.daemon = True
+        t.start()
+
+    return decorator
 
 
 if __name__ == "__main__":
@@ -160,57 +173,57 @@ if __name__ == "__main__":
             except:
                 print("Trying to connect to Kafka")
 
-        while True:
-            try:
-                print("Trying to read messages")
-                for message in consumer:
-                    order: dict = message.value
-                    logging.info("Received message {}".format(message))
-                    json_order = ast.literal_eval(message.value)
-                    print(json_order)
-                    # Items from the order
-                    json_order_items = json_order['items']
-                    items_in_order = 0
-                    for item in json_order_items:
-                        items_in_order = items_in_order + int(item['quantity'])
+        # while True:
+        try:
+            print("Trying to read messages")
+            for message in consumer:
+                order: dict = message.value
+                logging.info("Received message {}".format(message))
+                json_order = ast.literal_eval(message.value)
+                print(json_order)
+                # Items from the order
+                json_order_items = json_order['items']
+                items_in_order = 0
+                for item in json_order_items:
+                    items_in_order = items_in_order + int(item['quantity'])
 
-                    css_order = CssOrder(json_order['name'], json_order['service'], items_in_order,
-                                         json_order['ordered_at'])
-                    db.session.add(css_order)
+                css_order = CssOrder(json_order['name'], json_order['service'], items_in_order,
+                                     json_order['ordered_at'])
+                db.session.add(css_order)
+                db.session.commit()
+                print("#############################")
+                print("## {}".format(css_order.id))
+                print("## {}".format(css_order.name))
+                print("#############################")
+
+                for item in json_order_items:
+                    order_item = OrderItem(css_order.id, item['name'], item['price_per_unit'], item['quantity'])
+                    db.session.add(order_item)
                     db.session.commit()
-                    print("#############################")
-                    print("## {}".format(css_order.id))
-                    print("## {}".format(css_order.name))
-                    print("#############################")
-
-                    for item in json_order_items:
-                        order_item = OrderItem(css_order.id, item['name'], item['price_per_unit'], item['quantity'])
-                        db.session.add(order_item)
-                        db.session.commit()
-                        menu_item = MenuItem.query.filter_by(name=item['name']).first()
-
-                        print("###################################")
-                        job = q.enqueue(JobWorker.process_item, css_order.id, order_item.id, item['quantity'],
-                                        menu_item.cook_time,
-                                        menu_item.name)
-                        print("## {}".format(job))
-                        print("###################################")
+                    menu_item = MenuItem.query.filter_by(name=item['name']).first()
 
                     print("###################################")
-                    job = q.enqueue(JobWorker.process, css_order.id)
+                    job = q.enqueue(JobWorker.process_item, css_order.id, order_item.id, item['quantity'],
+                                    menu_item.cook_time,
+                                    menu_item.name)
                     print("## {}".format(job))
                     print("###################################")
 
-                    # # Worker Stats
-                    # # workers = Worker.all(connection=redis)
-                    # workers = Worker.all(queue=q)
-                    # for worker in workers:
-                    #     print("Worker {} {} {} {}".format(worker.name, worker.successful_job_count,
-                    #                                       worker.failed_job_count,
-                    #                                       worker.total_working_time))
+                print("###################################")
+                job = q.enqueue(JobWorker.process, css_order.id)
+                print("## {}".format(job))
+                print("###################################")
 
-            except TypeError as te:
-                print("Waiting for kafka... {}".format(str(te)))
+                # # Worker Stats
+                # # workers = Worker.all(connection=redis)
+                # workers = Worker.all(queue=q)
+                # for worker in workers:
+                #     print("Worker {} {} {} {}".format(worker.name, worker.successful_job_count,
+                #                                       worker.failed_job_count,
+                #                                       worker.total_working_time))
+
+        except TypeError as te:
+            print("Waiting for kafka... {}".format(str(te)))
 
     else:
         print("Error setting up the database tables")

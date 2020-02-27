@@ -24,7 +24,8 @@ class JobWorker:
         print("{} x {} ready".format(quantity, name))
 
         # css_order = CssOrder.query.filter_by(id=order_id).first()
-        order_item = OrderItem.query.filter_by(id=item_id).with_for_update().first()
+        # order_item = OrderItem.query.filter_by(id=item_id).with_for_update().first()
+        order_item = OrderItem.query.filter_by(id=item_id).first()
         order_item.status = CssConstants.ORDER_COMPLETE
         order_item.completed_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         db.session.add(order_item)
@@ -33,6 +34,8 @@ class JobWorker:
         # css_order = CssOrder.query.filter_by(id=order_id).first()
         css_order = CssOrder.query.filter_by(id=order_id).with_for_update().first()
         css_order.completed_items_in_order = CssOrder.completed_items_in_order + quantity
+        # Delayed by the first order, trying to not lock too soon.
+        css_order.status = CssConstants.ORDER_IN_PROGRESS
         db.session.add(css_order)
         db.session.commit()
 
