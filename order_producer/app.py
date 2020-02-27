@@ -40,9 +40,12 @@ if __name__ == "__main__":
             message: str = json.dumps(order)
             producer.send(TRANSACTIONS_TOPIC, value=message)
             print(order)
-            sleep(randint(3, 7))
+            sleep(randint(1, 3))
             i = i + 1
         except NoBrokersAvailable:
             print("Will try again")
+        except IndexError:
+            print("No more orders!")
+            break
 
-    # app.run(host="0.0.0.0", debug=True)
+# app.run(host="0.0.0.0", debug=True)

@@ -3,7 +3,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from kafka import KafkaConsumer
 from redis import Redis
-from rq import Queue
+from rq import Queue, Worker
 from datetime import datetime
 import psycopg2
 import os
@@ -35,7 +35,8 @@ from order_item import OrderItem
 # db = SQLAlchemy(app)
 
 redis_conn = Redis(host='redis')
-q = Queue('order_queue', connection=redis_conn, is_async=False)
+# q = Queue('order_queue', connection=redis_conn, is_async=False)
+q = Queue('order_queue', connection=redis_conn)
 
 redis = Redis(host='redis', port=6379)
 KAFKA_BROKER_URL = os.environ.get('KAFKA_BROKER_URL')
@@ -199,6 +200,14 @@ if __name__ == "__main__":
                     job = q.enqueue(JobWorker.process, css_order.id)
                     print("## {}".format(job))
                     print("###################################")
+
+                    # Worker Stats
+                    # workers = Worker.all(connection=redis)
+                    workers = Worker.all(queue=q)
+                    for worker in workers:
+                        print("Worker {} {} {} {}".format(worker.name, worker.successful_job_count,
+                                                          worker.failed_job_count,
+                                                          worker.total_working_time))
 
             except TypeError as te:
                 print("Waiting for kafka... {}".format(str(te)))
