@@ -150,7 +150,7 @@
                               <img alt="Image placeholder" src="/static/assets/img/theme/bootstrap.jpg">
                             </a>
                             <div class="media-body">
-                              <span class="mb-0 text-sm">Argon Design System</span>
+                              <span class="mb-0 text-sm">{{ last_4_orders_list[0]['name'] }}</span>
                             </div>
                           </div>
                         </th>
@@ -159,7 +159,7 @@
                         </td>
                         <td>
                           <span class="badge badge-dot mr-4">
-                            <i class="bg-warning"></i> pending
+                            <i class="bg-warning"></i> {{ last_4_orders_list[0]['status'] }}
                           </span>
                         </td>
                         <td>
@@ -180,7 +180,7 @@
                         </td>
                         <td>
                           <div class="d-flex align-items-center">
-                            <span class="mr-2">60%</span>
+                            <span class="mr-2">{{ last_4_orders_list[0]['percent_completion'] }}%</span>
                             <div>
                               <div class="progress">
                                 <div class="progress-bar bg-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;"></div>
@@ -209,7 +209,7 @@
                               <img alt="Image placeholder" src="/static/assets/img/theme/angular.jpg">
                             </a>
                             <div class="media-body">
-                              <span class="mb-0 text-sm">Angular Now UI Kit PRO</span>
+                              <span class="mb-0 text-sm">{{ last_4_orders_list[0]['name'] }}</span>
                             </div>
                           </div>
                         </th>
@@ -218,7 +218,7 @@
                         </td>
                         <td>
                           <span class="badge badge-dot">
-                            <i class="bg-success"></i> completed
+                            <i class="bg-success"></i> {{ last_4_orders_list[0]['status'] }}
                           </span>
                         </td>
                         <td>
@@ -239,7 +239,7 @@
                         </td>
                         <td>
                           <div class="d-flex align-items-center">
-                            <span class="mr-2">100%</span>
+                            <span class="mr-2">{{ last_4_orders_list[0]['percent_completion'] }}%</span>
                             <div>
                               <div class="progress">
                                 <div class="progress-bar bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>

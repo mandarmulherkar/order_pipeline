@@ -111,12 +111,19 @@ def index():
 
     # Get last 4 orders as received
     #
-    last_4_orders = CssOrder.query.order_by()
+    last_4_orders = CssOrder.query.order_by(CssOrder.created_at.desc()).limit(4).all()
     #     CssOrder.status == 'order_complete').all()
+
+    last_4_orders_list = []
+    for order in last_4_orders:
+        percent_completion = (order.completed_items_in_order / order.items_in_order) * 100
+        last_4_orders_list.append(
+            {"name": order.name, "status": order.status, "percent_completion": percent_completion})
     return render_template('index.html', chart_data={"values": values, "labels": labels, "legend": legend},
                            orders_complete=complete_count, orders_received=received_count,
                            items_total=items_count_total,
-                           items_cooked=items_cooked_count_total)
+                           items_cooked=items_cooked_count_total,
+                           last_4_orders_list=last_4_orders_list)
 
 
 @blueprint.route('/<template>')
