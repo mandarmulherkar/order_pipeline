@@ -34,7 +34,7 @@ from order_item import OrderItem
 # app.config.from_object("config.Config")
 # db = SQLAlchemy(app)
 
-redis_conn = Redis(host='redis')
+redis_conn = Redis(host='redis', port=6379)
 # q = Queue('order_queue', connection=redis_conn, is_async=False)
 q = Queue('order_queue', connection=redis_conn)
 
@@ -201,13 +201,13 @@ if __name__ == "__main__":
                     print("## {}".format(job))
                     print("###################################")
 
-                    # Worker Stats
-                    # workers = Worker.all(connection=redis)
-                    workers = Worker.all(queue=q)
-                    for worker in workers:
-                        print("Worker {} {} {} {}".format(worker.name, worker.successful_job_count,
-                                                          worker.failed_job_count,
-                                                          worker.total_working_time))
+                    # # Worker Stats
+                    # # workers = Worker.all(connection=redis)
+                    # workers = Worker.all(queue=q)
+                    # for worker in workers:
+                    #     print("Worker {} {} {} {}".format(worker.name, worker.successful_job_count,
+                    #                                       worker.failed_job_count,
+                    #                                       worker.total_working_time))
 
             except TypeError as te:
                 print("Waiting for kafka... {}".format(str(te)))

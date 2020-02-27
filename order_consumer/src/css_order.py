@@ -21,7 +21,14 @@ class CssOrder(db.Model):
         self.name = name
         self.service = service
         self.items_in_order = items_in_order
-        self.ordered_at = datetime.strptime(ordered_at, "%Y-%m-%dT%H:%M:%S")
+        try:
+            self.ordered_at = datetime.strptime(ordered_at, "%Y-%m-%dT%H:%M:%S")
+        except ValueError:
+            try:
+                self.ordered_at = datetime.strptime(ordered_at, "%Y-%m-%dT%H:%M:%S.%f")
+            except ValueError:
+                self.ordered_at = datetime.utcnow()
+
         self.status = status
         self.completed_items_in_order = completed_items_in_order
 

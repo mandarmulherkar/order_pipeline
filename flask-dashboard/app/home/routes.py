@@ -103,27 +103,32 @@ def index():
     values = [10, 9, 8, 7, 6, 4, 7, 8]
 
     # Top Stats
-    received_count = get_count(CssOrder.query.filter())
-    complete_count = get_count(CssOrder.query.filter(CssOrder.status == CssConstants.ORDER_COMPLETE))
+    # Top Stats
+    received_query = CssOrder.query.filter()
+    received_count = get_count(received_query)
 
-    items_count_total = get_count(OrderItem.query.filter())
-    items_cooked_count_total = get_count(OrderItem.query.filter(OrderItem.status == CssConstants.ORDER_COMPLETE))
+    complete_query = CssOrder.query.filter(CssOrder.status == CssConstants.ORDER_COMPLETE)
+    complete_count = get_count(complete_query)
+
+    items_count_query = OrderItem.query.filter()
+    items_count = get_count(items_count_query)
+
+    items_cooked_query = OrderItem.query.filter(OrderItem.status == CssConstants.ORDER_COMPLETE)
+    items_cooked_count = get_count(items_cooked_query)
 
     # Get last 4 orders as received
-    #
-    last_4_orders = CssOrder.query.order_by(CssOrder.created_at.desc()).limit(4).all()
-    #     CssOrder.status == 'order_complete').all()
+    last_few_orders = CssOrder.query.order_by(CssOrder.created_at.desc()).limit(4).all()
 
-    last_4_orders_list = []
-    for order in last_4_orders:
-        percent_completion = (order.completed_items_in_order / order.items_in_order) * 100
-        last_4_orders_list.append(
-            {"name": order.name, "status": order.status, "percent_completion": percent_completion})
+    last_few_orders_list = []
+    for order in last_few_orders:
+        percent_completion = (order.completed_items_in_order / float(order.items_in_order)) * 100
+        last_few_orders_list.append(
+            {"name": order.name, "status": order.status, "percent_completion": str(percent_completion)})
     return render_template('index.html', chart_data={"values": values, "labels": labels, "legend": legend},
                            orders_complete=complete_count, orders_received=received_count,
-                           items_total=items_count_total,
-                           items_cooked=items_cooked_count_total,
-                           last_4_orders_list=last_4_orders_list)
+                           items_total=items_count,
+                           items_cooked=items_cooked_count,
+                           last_few_orders_list=last_few_orders_list, length_last_few=len(last_few_orders_list))
 
 
 @blueprint.route('/<template>')
