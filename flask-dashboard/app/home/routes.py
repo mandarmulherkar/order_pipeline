@@ -83,39 +83,6 @@ def index():
     if not current_user.is_authenticated:
         return redirect(url_for('base_blueprint.login'))
 
-    # css_order = CssOrder.query.filter_by(id=2).with_for_update().first()
-    # query(CssOrder.column, func.count(Table.column)).group_by(Table.column).all()
-    # query = text(
-    #     "select date_trunc('minute', completed_at), count(*) from received_order where status = 'order_complete' group by date_trunc('minute', completed_at) order by date_trunc('minute', completed_at) desc limit 10;")
-    # query = query.columns(CssOrder.completed_at)
-
-    css_order = CssOrder.query.with_entities(func.date_trunc('minute', CssOrder.created_at),
-                                             func.count(CssOrder.id)).group_by(
-        func.date_trunc('minute', CssOrder.created_at)).order_by(
-        func.date_trunc('minute', CssOrder.created_at)).limit(8).all()
-
-    data = []
-    labels = []
-    for order in css_order:
-        labels.append(order[0].strftime("%H:%M:%S"))
-        data.append(order[1])
-
-    #
-    # if len(data) < 8:
-    #     for i in range(len(data), 8):
-    #         data.append(0)
-
-    print(data)
-    print(labels)
-    # css_order = CssOrder.query.from_statement(query).all()
-
-    legend = 'Orders per minute'
-    labels = labels
-    # ["January", "February", "March", "April", "May", "June", "July", "August"]
-    values = data
-    # [10, 9, 8, 7, 6, 4, 7, 8]
-
-    # Top Stats
     # Top Stats
     received_query = CssOrder.query.filter()
     received_count = get_count(received_query)
@@ -135,39 +102,52 @@ def index():
     in_progress_query_items = OrderItem.query.filter(OrderItem.status == CssConstants.ORDER_IN_PROGRESS)
     in_progress_count_items = get_count(in_progress_query_items)
 
-    # Get last 4 orders as received
-    last_few_orders = CssOrder.query.filter(or_(
-        CssOrder.status == CssConstants.ORDER_IN_PROGRESS, CssOrder.status == CssConstants.ORDER_COMPLETE)).order_by(
-        CssOrder.created_at.desc()).limit(4).all()
+    labels_orders_per_minute, legend_orders_per_minute, values_orders_per_minute = get_orders_per_minute()
+    labels_orders_per_minute_complete, legend_orders_per_minute_complete, values_orders_per_minute_complete = get_orders_per_minute_complete()
 
-    last_few_orders_list = []
-    for order in last_few_orders:
-        percent_completion = round((order.completed_items_in_order / float(order.items_in_order)) * 100, 2)
-        last_few_orders_list.append(
-            {"id": order.id, "name": order.name, "status": order.status, "percent_completion": str(percent_completion),
-             "service": order.service})
+    labels_items_per_minute, legend_items_per_minute, values_items_per_minute = get_items_per_minute()
+    labels_items_per_minute_complete, legend_items_per_minute_complete, values_items_per_minute_complete = get_items_per_minute_complete()
+
+    # Find waiting time / delays
+    # select date_trunc('minute', created_at) as time_period, avg(completed_at - created_at) from order_item
+    # group by time_period order by date_trunc('minute', created_at);
+    labels_avg_time_to_completion, legend_avg_time_to_completion, values_avg_time_to_completion = get_avg_time_to_completion()
+
+    # Orders per service, top 5
+    labels_orders_per_service, legend_orders_per_service, values_orders_per_service = get_orders_per_service()
+
+    # Count of items
+    labels_items_ordered, legend_items_ordered, values_items_ordered = get_most_requested_items()
+
+    # Get last (4) orders as received
+    last_few_orders_list = get_last_few_orders(4)
 
     #  Get most popular service
-    most_popular_service = CssOrder.query.with_entities(CssOrder.service,
-                                                        func.count(CssOrder.id).label('total')).group_by(
-        CssOrder.service).order_by(desc('total')).limit(1).all()
-
-    if len(most_popular_service) == 0:
-        most_popular_service = 'Turning on the stove...'
-    else:
-        most_popular_service = most_popular_service[0].service + ", " + str(most_popular_service[0].total)
+    most_popular_service = get_popular_service()
 
     #  Get most popular item
-    most_popular_item = OrderItem.query.with_entities(OrderItem.name,
-                                                      func.count(OrderItem.id).label('total')).group_by(
-        OrderItem.name).order_by(desc('total')).limit(1).all()
+    most_popular_item = get_popular_item()
 
-    if len(most_popular_item) == 0:
-        most_popular_item = 'Cutting onions...'
-    else:
-        most_popular_item = most_popular_item[0].name + ", " + str(most_popular_item[0].total)
-
-    return render_template('index.html', chart_data={"values": values, "labels": labels, "legend": legend},
+    return render_template('index.html',
+                           orders_per_minute={"values": values_orders_per_minute, "labels": labels_orders_per_minute,
+                                              "legend": legend_orders_per_minute},
+                           orders_per_minute_complete={"values": values_orders_per_minute_complete,
+                                                       "labels": labels_orders_per_minute_complete,
+                                                       "legend": legend_orders_per_minute_complete},
+                           items_per_minute={"values": values_items_per_minute, "labels": labels_items_per_minute,
+                                             "legend": legend_items_per_minute},
+                           items_per_minute_complete={"values": values_items_per_minute_complete,
+                                                      "labels": labels_items_per_minute_complete,
+                                                      "legend": legend_items_per_minute_complete},
+                           avg_time_to_completion={"values": values_avg_time_to_completion,
+                                                   "labels": labels_avg_time_to_completion,
+                                                   "legend": legend_avg_time_to_completion},
+                           orders_per_service={"values": values_orders_per_service,
+                                               "labels": labels_orders_per_service,
+                                               "legend": legend_orders_per_service},
+                           most_requested_items={"values": values_items_ordered,
+                                                 "labels": labels_items_ordered,
+                                                 "legend": legend_items_ordered},
                            orders_complete=complete_count, orders_received=received_count,
                            items_total=items_count,
                            items_cooked=items_cooked_count,
@@ -176,6 +156,189 @@ def index():
                            last_few_orders_list=last_few_orders_list, length_last_few=len(last_few_orders_list),
                            most_popular_service=most_popular_service,
                            most_popular_item=most_popular_item)
+
+
+def get_orders_per_service():
+    orders_per_service = CssOrder.query \
+        .with_entities(CssOrder.service,
+                       func.count(CssOrder.id).label('total')) \
+        .group_by(CssOrder.service) \
+        .order_by('total') \
+        .limit(5) \
+        .all()
+    data_orders_per_service = []
+    labels_orders_per_service = []
+    for service in orders_per_service:
+        labels_orders_per_service.append(service[0])
+        data_orders_per_service.append(service[1])
+    print("#####################################################")
+    print(data_orders_per_service)
+    print("#####################################################")
+    legend_orders_per_service = 'Orders Per Service'
+    labels_orders_per_service = labels_orders_per_service
+    values_orders_per_service = data_orders_per_service
+    return labels_orders_per_service, legend_orders_per_service, values_orders_per_service
+
+
+def get_most_requested_items():
+    items_ordered = OrderItem.query \
+        .with_entities(OrderItem.name,
+                       func.count(OrderItem.id).label('total')) \
+        .group_by(OrderItem.name) \
+        .order_by(desc('total')) \
+        .limit(5) \
+        .all()
+    data_items_ordered = []
+    labels_items_ordered = []
+    for item in items_ordered:
+        labels_items_ordered.append(item[0][0:8])
+        data_items_ordered.append(item[1])
+    print("#####################################################")
+    print(data_items_ordered)
+    print("#####################################################")
+    legend_items_ordered = 'Most Requested Items'
+    labels_items_ordered = labels_items_ordered
+    values_items_ordered = data_items_ordered
+    return labels_items_ordered, legend_items_ordered, values_items_ordered
+
+
+def get_avg_time_to_completion():
+    avg_wait_times_per_minute = OrderItem.query \
+        .with_entities(func.date_trunc('minute', OrderItem.created_at),
+                       func.avg(OrderItem.completed_at - OrderItem.created_at).label('average')) \
+        .filter(OrderItem.status == CssConstants.ORDER_COMPLETE) \
+        .group_by(func.date_trunc('minute', OrderItem.created_at)) \
+        .order_by(func.date_trunc('minute', OrderItem.created_at)) \
+        .limit(15) \
+        .all()
+    data_avg_wait_times = []
+    labels_avg_wait_times = []
+    for wait_time in avg_wait_times_per_minute:
+        seconds = wait_time[1].seconds % 60
+        minutes = (wait_time[1].seconds // 60) % 60
+        hours = (wait_time[1].seconds // 3600) % 24
+        days = wait_time[1].days
+
+        labels_avg_wait_times.append(wait_time[0].strftime("%H:%M:%S"))
+        data_avg_wait_times.append(minutes)
+    print("#####################################################")
+    print(data_avg_wait_times)
+    print("#####################################################")
+    legend_avg_wait_times = 'Avg. Time To Completion'
+    labels_avg_wait_times = labels_avg_wait_times
+    values_avg_wait_times = data_avg_wait_times
+    return labels_avg_wait_times, legend_avg_wait_times, values_avg_wait_times
+
+
+def get_popular_item():
+    most_popular_item = OrderItem.query.with_entities(OrderItem.name,
+                                                      func.count(OrderItem.id).label('total')).group_by(
+        OrderItem.name).order_by(desc('total')).limit(1).all()
+    if len(most_popular_item) == 0:
+        most_popular_item = 'Cutting onions...'
+    else:
+        most_popular_item = most_popular_item[0].name
+    return most_popular_item
+
+
+def get_popular_service():
+    most_popular_service = CssOrder.query.with_entities(CssOrder.service,
+                                                        func.count(CssOrder.id).label('total')).group_by(
+        CssOrder.service).order_by(desc('total')).limit(1).all()
+    if len(most_popular_service) == 0:
+        most_popular_service = 'Turning on the stove...'
+    else:
+        most_popular_service = most_popular_service[0].service
+    return most_popular_service
+
+
+def get_last_few_orders(last_orders):
+    last_few_orders = CssOrder.query.filter(or_(
+        CssOrder.status == CssConstants.ORDER_IN_PROGRESS, CssOrder.status == CssConstants.ORDER_COMPLETE)).order_by(
+        CssOrder.created_at.desc()) \
+        .limit(last_orders) \
+        .all()
+    last_few_orders_list = []
+    for order in last_few_orders:
+        percent_completion = round((order.completed_items_in_order / float(order.items_in_order)) * 100, 2)
+        last_few_orders_list.append(
+            {"id": order.id, "name": order.name, "status": order.status, "percent_completion": str(percent_completion),
+             "service": order.service})
+    return last_few_orders_list
+
+
+def get_items_per_minute():
+    items_per_minute = OrderItem.query.with_entities(func.date_trunc('minute', OrderItem.created_at),
+                                                     func.count(OrderItem.id)).group_by(
+        func.date_trunc('minute', OrderItem.created_at)).order_by(
+        func.date_trunc('minute', OrderItem.created_at)) \
+        .limit(15) \
+        .all()
+    data_items_per_minute = []
+    labels_items_per_minute = []
+    for item in items_per_minute:
+        labels_items_per_minute.append(item[0].strftime("%H:%M:%S"))
+        data_items_per_minute.append(item[1])
+    legend_items_per_minute = 'Total received'
+    labels_items_per_minute = labels_items_per_minute
+    values_items_per_minute = data_items_per_minute
+    return labels_items_per_minute, legend_items_per_minute, values_items_per_minute
+
+
+def get_items_per_minute_complete():
+    items_per_minute_complete = OrderItem.query \
+        .with_entities(func.date_trunc('minute', OrderItem.completed_at), func.count(OrderItem.id)) \
+        .filter(OrderItem.status == CssConstants.ORDER_COMPLETE) \
+        .group_by(func.date_trunc('minute', OrderItem.completed_at)) \
+        .order_by(func.date_trunc('minute', OrderItem.completed_at)) \
+        .limit(15) \
+        .all()
+    data_items_per_minute_complete = []
+    labels_items_per_minute_complete = []
+    for item in items_per_minute_complete:
+        labels_items_per_minute_complete.append(item[0].strftime("%H:%M:%S"))
+        data_items_per_minute_complete.append(item[1])
+    legend_items_per_minute_complete = 'Completed'
+    labels_items_per_minute_complete = labels_items_per_minute_complete
+    values_items_per_minute_complete = data_items_per_minute_complete
+    return labels_items_per_minute_complete, legend_items_per_minute_complete, values_items_per_minute_complete
+
+
+def get_orders_per_minute():
+    orders_per_minute = CssOrder.query.with_entities(func.date_trunc('minute', CssOrder.created_at),
+                                                     func.count(CssOrder.id)).group_by(
+        func.date_trunc('minute', CssOrder.created_at)).order_by(
+        func.date_trunc('minute', CssOrder.created_at)) \
+        .limit(15) \
+        .all()
+    data_orders_per_minute = []
+    labels_orders_per_minute = []
+    for order in orders_per_minute:
+        labels_orders_per_minute.append(order[0].strftime("%H:%M:%S"))
+        data_orders_per_minute.append(order[1])
+    legend_orders_per_minute = 'Total received'
+    labels_orders_per_minute = labels_orders_per_minute
+    values_orders_per_minute = data_orders_per_minute
+    return labels_orders_per_minute, legend_orders_per_minute, values_orders_per_minute
+
+
+def get_orders_per_minute_complete():
+    orders_per_minute_complete = CssOrder.query \
+        .with_entities(func.date_trunc('minute', CssOrder.completed_at), func.count(CssOrder.id)) \
+        .filter(CssOrder.status == CssConstants.ORDER_COMPLETE) \
+        .group_by(func.date_trunc('minute', CssOrder.completed_at)) \
+        .order_by(func.date_trunc('minute', CssOrder.completed_at)) \
+        .limit(15) \
+        .all()
+    data_orders_per_minute_complete = []
+    labels_orders_per_minute_complete = []
+    for order in orders_per_minute_complete:
+        labels_orders_per_minute_complete.append(order[0].strftime("%H:%M:%S"))
+        data_orders_per_minute_complete.append(order[1])
+    legend_orders_per_minute_complete = 'Completed'
+    labels_orders_per_minute_complete = labels_orders_per_minute_complete
+    values_orders_per_minute_complete = data_orders_per_minute_complete
+    return labels_orders_per_minute_complete, legend_orders_per_minute_complete, values_orders_per_minute_complete
 
 
 @blueprint.route('/<template>')

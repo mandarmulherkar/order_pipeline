@@ -3,200 +3,200 @@
 {% block title %} Dashboard {% endblock title %}
 
 {% block stylesheets %}
-  {{ super() }}
+{{ super() }}
 {% endblock stylesheets %}
 
 {% block content %}
 
-  {% include "site_template/navigation.html" %}
+{% include "site_template/navigation.html" %}
 
-  <!-- Header -->
-    <div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
-      <div class="container-fluid mt-3">
+<!-- Header -->
+<div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
+    <div class="container-fluid mt-3">
         <div class="header-body">
-          <!-- Card stats -->
-          <div class="row">
-            <div class="col-xl-3 col-lg-6">
-              <div class="card card-stats mb-4 mb-xl-0">
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col">
-                      <h5 class="card-title text-uppercase text-muted mb-0">Orders Received</h5>
-                      <span class="h2 font-weight-bold mb-0">{{ orders_received }}</span>
+            <!-- Card stats -->
+            <div class="row">
+                <div class="col-xl-3 col-lg-6">
+                    <div class="card card-stats mb-4 mb-xl-0">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="card-title text-uppercase text-muted mb-0">Orders Received</h5>
+                                    <span class="h2 font-weight-bold mb-0">{{ orders_received }}</span>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon icon-shape bg-danger text-white rounded-circle shadow">
+                                        <i class="fas fa-chart-bar"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="mt-3 mb-0 text-muted text-sm">
+                                <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
+                                <span class="text-nowrap">Since last month</span>
+                            </p>
+                        </div>
                     </div>
-                    <div class="col-auto">
-                      <div class="icon icon-shape bg-danger text-white rounded-circle shadow">
-                        <i class="fas fa-chart-bar"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <p class="mt-3 mb-0 text-muted text-sm">
-                    <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                    <span class="text-nowrap">Since last month</span>
-                  </p>
                 </div>
-              </div>
-            </div>
-            <div class="col-xl-3 col-lg-6">
-              <div class="card card-stats mb-4 mb-xl-0">
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col">
-                      <h5 class="card-title text-uppercase text-muted mb-0">Orders in Progress</h5>
-                      <span class="h2 font-weight-bold mb-0">{{ orders_in_progress }}</span>
+                <div class="col-xl-3 col-lg-6">
+                    <div class="card card-stats mb-4 mb-xl-0">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="card-title text-uppercase text-muted mb-0">Orders in Progress</h5>
+                                    <span class="h2 font-weight-bold mb-0">{{ orders_in_progress }}</span>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon icon-shape bg-yellow text-white rounded-circle shadow">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="mt-3 mb-0 text-muted text-sm">
+                                <span class="text-warning mr-2"><i class="fas fa-arrow-down"></i>3</span>
+                                <span class="text-nowrap">Since yesterday</span>
+                            </p>
+                        </div>
                     </div>
-                    <div class="col-auto">
-                      <div class="icon icon-shape bg-yellow text-white rounded-circle shadow">
-                        <i class="fas fa-users"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <p class="mt-3 mb-0 text-muted text-sm">
-                    <span class="text-warning mr-2"><i class="fas fa-arrow-down"></i>3</span>
-                    <span class="text-nowrap">Since yesterday</span>
-                  </p>
                 </div>
-              </div>
-            </div>
-            <div class="col-xl-3 col-lg-6">
-              <div class="card card-stats mb-4 mb-xl-0">
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col">
-                      <h5 class="card-title text-uppercase text-muted mb-0">Orders Complete</h5>
-                      <span class="h2 font-weight-bold mb-0">{{ orders_complete }}</span>
+                <div class="col-xl-3 col-lg-6">
+                    <div class="card card-stats mb-4 mb-xl-0">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="card-title text-uppercase text-muted mb-0">Orders Complete</h5>
+                                    <span class="h2 font-weight-bold mb-0">{{ orders_complete }}</span>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon icon-shape bg-warning text-white rounded-circle shadow">
+                                        <i class="fas fa-chart-pie"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="mt-3 mb-0 text-muted text-sm">
+                                <span class="text-danger mr-2"><i class="fas fa-arrow-down"></i> 3.48%</span>
+                                <span class="text-nowrap">Since last week</span>
+                            </p>
+                        </div>
                     </div>
-                    <div class="col-auto">
-                      <div class="icon icon-shape bg-warning text-white rounded-circle shadow">
-                        <i class="fas fa-chart-pie"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <p class="mt-3 mb-0 text-muted text-sm">
-                    <span class="text-danger mr-2"><i class="fas fa-arrow-down"></i> 3.48%</span>
-                    <span class="text-nowrap">Since last week</span>
-                  </p>
                 </div>
-              </div>
-            </div>
-            <div class="col-xl-3 col-lg-6">
-              <div class="card card-stats mb-4 mb-xl-0">
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col">
-                      <h5 class="card-title text-uppercase text-muted mb-0">Most Popular Service</h5>
-                      <span class="h4 font-weight-bold mb-0">{{ most_popular_service }}</span>
+                <div class="col-xl-3 col-lg-6">
+                    <div class="card card-stats mb-4 mb-xl-0">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="card-title text-uppercase text-muted mb-0">Most Popular Service</h5>
+                                    <span class="h4 font-weight-bold mb-0">{{ most_popular_service }}</span>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon icon-shape bg-danger text-white rounded-circle shadow">
+                                        <i class="fas fa-chart-bar"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="mt-3 mb-0 text-muted text-sm">
+                                <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
+                                <span class="text-nowrap">Since last month</span>
+                            </p>
+                        </div>
                     </div>
-                    <div class="col-auto">
-                      <div class="icon icon-shape bg-danger text-white rounded-circle shadow">
-                        <i class="fas fa-chart-bar"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <p class="mt-3 mb-0 text-muted text-sm">
-                    <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                    <span class="text-nowrap">Since last month</span>
-                  </p>
                 </div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
-
-      <div class="container-fluid mt-3">
-        <div class="header-body">
-          <!-- Second card stats row -->
-          <div class="row">
-            <div class="col-xl-3 col-lg-6">
-              <div class="card card-stats mb-4 mb-xl-0">
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col">
-                      <h5 class="card-title text-uppercase text-muted mb-0">Items Total</h5>
-                      <span class="h2 font-weight-bold mb-0">{{ items_total }}</span>
-                    </div>
-                    <div class="col-auto">
-                      <div class="icon icon-shape bg-yellow text-white rounded-circle shadow">
-                        <i class="fas fa-users"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <p class="mt-3 mb-0 text-muted text-sm">
-                    <span class="text-warning mr-2"><i class="fas fa-arrow-down"></i>3</span>
-                    <span class="text-nowrap">Since yesterday</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div class="col-xl-3 col-lg-6">
-              <div class="card card-stats mb-4 mb-xl-0">
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col">
-                      <h5 class="card-title text-uppercase text-muted mb-0">Items in Progress</h5>
-                      <span class="h2 font-weight-bold mb-0">{{ items_in_progress }}</span>
-                    </div>
-                    <div class="col-auto">
-                      <div class="icon icon-shape bg-info text-white rounded-circle shadow">
-                        <i class="fas fa-percent"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <p class="mt-3 mb-0 text-muted text-sm">
-                    <span class="text-success mr-2"><i class="fas fa-arrow-up"></i> 12%</span>
-                    <span class="text-nowrap">Since last month</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div class="col-xl-3 col-lg-6">
-              <div class="card card-stats mb-4 mb-xl-0">
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col">
-                      <h5 class="card-title text-uppercase text-muted mb-0">Items Cooked</h5>
-                      <span class="h2 font-weight-bold mb-0">{{ items_cooked }}</span>
-                    </div>
-                    <div class="col-auto">
-                      <div class="icon icon-shape bg-info text-white rounded-circle shadow">
-                        <i class="fas fa-percent"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <p class="mt-3 mb-0 text-muted text-sm">
-                    <span class="text-success mr-2"><i class="fas fa-arrow-up"></i> 12%</span>
-                    <span class="text-nowrap">Since last month</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div class="col-xl-3 col-lg-6">
-              <div class="card card-stats mb-4 mb-xl-0">
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col">
-                      <h5 class="card-title text-uppercase text-muted mb-0">Most Popular Item</h5>
-                      <span class="h4 font-weight-bold mb-0">{{ most_popular_item }}</span>
-                    </div>
-                    <div class="col-auto">
-                      <div class="icon icon-shape bg-warning text-white rounded-circle shadow">
-                        <i class="fas fa-chart-pie"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <p class="mt-3 mb-0 text-muted text-sm">
-                    <span class="text-danger mr-2"><i class="fas fa-arrow-down"></i> 3.48%</span>
-                    <span class="text-nowrap">Since last week</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
     </div>
+
+    <div class="container-fluid mt-3">
+        <div class="header-body">
+            <!-- Second card stats row -->
+            <div class="row">
+                <div class="col-xl-3 col-lg-6">
+                    <div class="card card-stats mb-4 mb-xl-0">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="card-title text-uppercase text-muted mb-0">Items Total</h5>
+                                    <span class="h2 font-weight-bold mb-0">{{ items_total }}</span>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon icon-shape bg-yellow text-white rounded-circle shadow">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="mt-3 mb-0 text-muted text-sm">
+                                <span class="text-warning mr-2"><i class="fas fa-arrow-down"></i>3</span>
+                                <span class="text-nowrap">Since yesterday</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-6">
+                    <div class="card card-stats mb-4 mb-xl-0">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="card-title text-uppercase text-muted mb-0">Items in Progress</h5>
+                                    <span class="h2 font-weight-bold mb-0">{{ items_in_progress }}</span>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon icon-shape bg-info text-white rounded-circle shadow">
+                                        <i class="fas fa-percent"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="mt-3 mb-0 text-muted text-sm">
+                                <span class="text-success mr-2"><i class="fas fa-arrow-up"></i> 12%</span>
+                                <span class="text-nowrap">Since last month</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-6">
+                    <div class="card card-stats mb-4 mb-xl-0">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="card-title text-uppercase text-muted mb-0">Items Cooked</h5>
+                                    <span class="h2 font-weight-bold mb-0">{{ items_cooked }}</span>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon icon-shape bg-info text-white rounded-circle shadow">
+                                        <i class="fas fa-percent"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="mt-3 mb-0 text-muted text-sm">
+                                <span class="text-success mr-2"><i class="fas fa-arrow-up"></i> 12%</span>
+                                <span class="text-nowrap">Since last month</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-6">
+                    <div class="card card-stats mb-4 mb-xl-0">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="card-title text-uppercase text-muted mb-0">Most Popular Item</h5>
+                                    <span class="h4 font-weight-bold mb-0">{{ most_popular_item }}</span>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon icon-shape bg-warning text-white rounded-circle shadow">
+                                        <i class="fas fa-chart-pie"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="mt-3 mb-0 text-muted text-sm">
+                                <span class="text-danger mr-2"><i class="fas fa-arrow-down"></i> 3.48%</span>
+                                <span class="text-nowrap">Since last week</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
 
 <!--<!DOCTYPE html>-->
 <!--<html lang="en">-->
@@ -214,218 +214,252 @@
 <!--    }-->
 <!--</style>-->
 
-  <div class="container-fluid mt-6">
+<div class="container-fluid mt-6">
     <div class="row">
-      <div class="col-xl-4 mb-5 mb-xl-0">
-        <div class="card bg-gradient-default shadow">
-          <div class="card-header bg-transparent">
-            <div class="row align-items-center">
-              <div class="col">
-                <h6 class="text-uppercase text-light ls-1 mb-1">Overview</h6>
-                <h2 class="text-white mb-0">Orders</h2>
-              </div>
-              <div class="col">
-                <ul class="nav nav-pills justify-content-end">
-                  <li class="nav-item mr-2 mr-md-0" data-toggle="chart" data-target="#chart-sales" data-update='{"data":{"datasets":[{"data":[0, 20, 5, 25, 10, 30, 15, 40, 40]}]}}' data-prefix="$" data-suffix="k">
-                    <a href="#" class="nav-link py-2 px-3 active" data-toggle="tab">
-                      <span class="d-none d-md-block">Month</span>
-                      <span class="d-md-none">M</span>
-                    </a>
-                  </li>
-                  <li class="nav-item" data-toggle="chart" data-target="#chart-sales" data-update='{"data":{"datasets":[{"data":[0, 20, 5, 25, 10, 30, 15, 40, 40]}]}}' data-prefix="$" data-suffix="k">
-                    <a href="#" class="nav-link py-2 px-3" data-toggle="tab">
-                      <span class="d-none d-md-block">Week</span>
-                      <span class="d-md-none">W</span>
-                    </a>
-                  </li>
-                </ul>
-              </div>
+
+        <div class="col-xl-4">
+            <div class="card shadow">
+                <div class="card-header bg-transparent">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h6 class="text-uppercase text-muted ls-1 mb-1">Avg. Time Delay</h6>
+                            <h2 class="mb-0">Avg. time delay to complete orders</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Chart -->
+                    <div class="chart">
+                        <canvas id="avg-time-to-complete" class="chart-canvas"></canvas>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="card-body">
-            <!-- Chart -->
-            <div class="chart">
-              <!-- Chart wrapper -->
-              <canvas id="chart-sales" class="chart-canvas"></canvas>
-            </div>
-          </div>
         </div>
-      </div>
 
-
-      <div class="col-xl-4">
-        <div class="card shadow">
-          <div class="card-header bg-transparent">
-            <div class="row align-items-center">
-              <div class="col">
-                <h6 class="text-uppercase text-muted ls-1 mb-1">Performance</h6>
-                <h2 class="mb-0">Total orders</h2>
-              </div>
+        <div class="col-xl-4">
+            <div class="card shadow">
+                <div class="card-header bg-transparent">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h6 class="text-uppercase text-muted ls-1 mb-1">Performance</h6>
+                            <h2 class="mb-0">Total orders</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Chart -->
+                    <div class="chart">
+                        <canvas id="items-per-minute" class="chart-canvas"></canvas>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="card-body">
-            <!-- Chart -->
-            <div class="chart">
-              <canvas id="chart-orders" class="chart-canvas"></canvas>
-            </div>
-          </div>
         </div>
-      </div>
 
-
-      <div class="col-xl-4">
-        <div class="card shadow">
-          <div class="card-header bg-transparent">
-            <div class="row align-items-center">
-              <div class="col">
-                <h6 class="text-uppercase text-muted ls-1 mb-1">Performance</h6>
-                <h2 class="mb-0">Total orders</h2>
-              </div>
+        <div class="col-xl-4">
+            <div class="card shadow">
+                <div class="card-header bg-transparent">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h6 class="text-uppercase text-muted ls-1 mb-1">Performance</h6>
+                            <h2 class="mb-0">Total orders</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Chart -->
+                    <div class="chart">
+                        <canvas id="orders-per-minute" class="chart-canvas"></canvas>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="card-body">
-            <!-- Chart -->
-            <div class="chart">
-              <canvas id="myChart" class="chart-canvas"></canvas>
-<!--              <canvas id="myChart" height="100%"></canvas>-->
-            </div>
-          </div>
         </div>
-      </div>
-
     </div>
-
-  </div>
-
+</div>
 
 
-  <div class="container-fluid mt-6">
+<div class="container-fluid mt-6">
+    <div class="row">
+        <div class="col-xl-4">
+            <div class="card shadow">
+                <div class="card-header bg-transparent">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h6 class="text-uppercase text-muted ls-1 mb-1">Orders Per Service</h6>
+                            <h2 class="mb-0">Orders Per Service</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Chart -->
+                    <div class="chart">
+                        <canvas id="orders-per-service" class="chart-canvas"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-8">
+            <div class="card shadow">
+                <div class="card-header bg-transparent">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h6 class="text-uppercase text-muted ls-1 mb-1">Orders Per Service</h6>
+                            <h2 class="mb-0">Orders Per Service</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Chart -->
+                    <div class="chart">
+                        <canvas id="most-requested-items" class="chart-canvas"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid mt-6">
 
     <!-- Table -->
-      <div class="row">
-            <div class="col">
-              <div class="card shadow">
+    <div class="row">
+        <div class="col">
+            <div class="card shadow">
                 <div class="card-header border-0">
-                  <h3 class="mb-0">Orders</h3>
+                    <h3 class="mb-0">Orders</h3>
                 </div>
                 <div class="table-responsive">
-                  <table class="table align-items-center table-flush">
-                    <thead class="thead-light">
-                      <tr>
-                        <th scope="col">Customer</th>
-                        <th scope="col">Service Name</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Items</th>
-                        <th scope="col">Completion</th>
-                        <th scope="col"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-
-                      {%for i in range(0, length_last_few)%}
+                    <table class="table align-items-center table-flush">
+                        <thead class="thead-light">
                         <tr>
-                          <th scope="row">
-                            <div class="media align-items-center">
-                              <a href="#" class="avatar rounded-circle mr-3">
-<!--                                <img alt="Image placeholder" src="/static/assets/img/theme/bootstrap.jpg">-->
-                                <img alt="Image placeholder" src="/static/assets/img/theme/team-{{ (last_few_orders_list[i]['id'] % 4) + 1 }}-800x800.jpg" class="rounded-circle">
-                              </a>
-                              <div class="media-body">
-                                <span class="mb-0 text-sm">{{ last_few_orders_list[i]['name'] }}</span>
-                              </div>
-                            </div>
-                          </th>
-                          <td>
-                            {{ last_few_orders_list[i]['service'] }}
-                          </td>
-                          <td>
+                            <th scope="col">Customer</th>
+                            <th scope="col">Service Name</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Items</th>
+                            <th scope="col">Completion</th>
+                            <th scope="col"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        {%for i in range(0, length_last_few)%}
+                        <tr>
+                            <th scope="row">
+                                <div class="media align-items-center">
+                                    <a href="#" class="avatar rounded-circle mr-3">
+                                        <!--                                <img alt="Image placeholder" src="/static/assets/img/theme/bootstrap.jpg">-->
+                                        <img alt="Image placeholder"
+                                             src="/static/assets/img/theme/team-{{ (last_few_orders_list[i]['id'] % 4) + 1 }}-800x800.jpg"
+                                             class="rounded-circle">
+                                    </a>
+                                    <div class="media-body">
+                                        <span class="mb-0 text-sm">{{ last_few_orders_list[i]['name'] }}</span>
+                                    </div>
+                                </div>
+                            </th>
+                            <td>
+                                {{ last_few_orders_list[i]['service'] }}
+                            </td>
+                            <td>
                             <span class="badge badge-dot mr-4">
                               <i class="bg-info"></i> {{ last_few_orders_list[i]['status'] }}
                             </span>
-                          </td>
-                          <td>
-                            <div class="avatar-group">
-                              <a href="#" class="avatar avatar-sm" data-toggle="tooltip" data-original-title="Ryan Tompson">
-                                <img alt="Image placeholder" src="/static/assets/img/theme/team-1-800x800.jpg" class="rounded-circle">
-                              </a>
-                              <a href="#" class="avatar avatar-sm" data-toggle="tooltip" data-original-title="Romina Hadid">
-                                <img alt="Image placeholder" src="/static/assets/img/theme/team-2-800x800.jpg" class="rounded-circle">
-                              </a>
-                              <a href="#" class="avatar avatar-sm" data-toggle="tooltip" data-original-title="Alexander Smith">
-                                <img alt="Image placeholder" src="/static/assets/img/theme/team-3-800x800.jpg" class="rounded-circle">
-                              </a>
-                              <a href="#" class="avatar avatar-sm" data-toggle="tooltip" data-original-title="Jessica Doe">
-                                <img alt="Image placeholder" src="/static/assets/img/theme/team-4-800x800.jpg" class="rounded-circle">
-                              </a>
-                            </div>
-                          </td>
-                          <td>
-                            <div class="d-flex align-items-center">
-                              <span class="mr-2">{{ last_few_orders_list[i]['percent_completion'] }}%</span>
-                              <div>
-                                <div class="progress">
-                                  <div class="progress-bar bg-info" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{ last_few_orders_list[i]['percent_completion'] }}%;"></div>
+                            </td>
+                            <td>
+                                <div class="avatar-group">
+                                    <a href="#" class="avatar avatar-sm" data-toggle="tooltip"
+                                       data-original-title="Ryan Tompson">
+                                        <img alt="Image placeholder" src="/static/assets/img/theme/team-1-800x800.jpg"
+                                             class="rounded-circle">
+                                    </a>
+                                    <a href="#" class="avatar avatar-sm" data-toggle="tooltip"
+                                       data-original-title="Romina Hadid">
+                                        <img alt="Image placeholder" src="/static/assets/img/theme/team-2-800x800.jpg"
+                                             class="rounded-circle">
+                                    </a>
+                                    <a href="#" class="avatar avatar-sm" data-toggle="tooltip"
+                                       data-original-title="Alexander Smith">
+                                        <img alt="Image placeholder" src="/static/assets/img/theme/team-3-800x800.jpg"
+                                             class="rounded-circle">
+                                    </a>
+                                    <a href="#" class="avatar avatar-sm" data-toggle="tooltip"
+                                       data-original-title="Jessica Doe">
+                                        <img alt="Image placeholder" src="/static/assets/img/theme/team-4-800x800.jpg"
+                                             class="rounded-circle">
+                                    </a>
                                 </div>
-                              </div>
-                            </div>
-                          </td>
-                          <td class="text-right">
-                            <div class="dropdown">
-                              <a class="btn btn-sm btn-icon-only text-light" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-ellipsis-v"></i>
-                              </a>
-                              <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                              </div>
-                            </div>
-                          </td>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <span class="mr-2">{{ last_few_orders_list[i]['percent_completion'] }}%</span>
+                                    <div>
+                                        <div class="progress">
+                                            <div class="progress-bar bg-info" role="progressbar" aria-valuenow="60"
+                                                 aria-valuemin="0" aria-valuemax="100"
+                                                 style="width: {{ last_few_orders_list[i]['percent_completion'] }}%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-right">
+                                <div class="dropdown">
+                                    <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
+                                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+                                        <a class="dropdown-item" href="#">Action</a>
+                                        <a class="dropdown-item" href="#">Another action</a>
+                                        <a class="dropdown-item" href="#">Something else here</a>
+                                    </div>
+                                </div>
+                            </td>
                         </tr>
                         {%endfor%}
 
-                    </tbody>
-                  </table>
+                        </tbody>
+                    </table>
                 </div>
 
                 <div class="card-footer py-4">
-                  <nav aria-label="...">
-                    <ul class="pagination justify-content-end mb-0">
-                      <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1">
-                          <i class="fas fa-angle-left"></i>
-                          <span class="sr-only">Previous</span>
-                        </a>
-                      </li>
-                      <li class="page-item active">
-                        <a class="page-link" href="#">1</a>
-                      </li>
-                      <li class="page-item">
-                        <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
-                      </li>
-                      <li class="page-item"><a class="page-link" href="#">3</a></li>
-                      <li class="page-item">
-                        <a class="page-link" href="#">
-                          <i class="fas fa-angle-right"></i>
-                          <span class="sr-only">Next</span>
-                        </a>
-                      </li>
-                    </ul>
-                  </nav>
+                    <nav aria-label="...">
+                        <ul class="pagination justify-content-end mb-0">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">
+                                    <i class="fas fa-angle-left"></i>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                            </li>
+                            <li class="page-item active">
+                                <a class="page-link" href="#">1</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
+                            </li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">
+                                    <i class="fas fa-angle-right"></i>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 
 
-<!--        <canvas id="myChart"></canvas>-->
+    <!--        <canvas id="myChart"></canvas>-->
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 
 
-<script>
+    <script>
 'use strict';
 
 var Charts = (function() {
@@ -827,25 +861,281 @@ var Charts = (function() {
   };
 
 })();
-</script>
 
-<script>
-<!--  function renderChart(data, labels) {-->
-    var chartData = {
-    labels : [{% for item in chart_data['labels'] %}
+
+    </script>
+
+    <script>
+        var ordersPerServiceChartData = {
+        labels : [{% for item in orders_per_service['labels'] %}
+                   "{{ item }}",
+                  {% endfor %}],
+        datasets : [{
+            label: '{{ orders_per_service['legend'] }}',
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: "rgba(75,192,192,0.4)",
+            borderColor: Charts.colors.theme['primary'],
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: Charts.colors.theme['primary'],
+            pointBackgroundColor: "#fff",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+            pointHoverBorderColor: "rgba(220,220,220,1)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data : [{% for item in orders_per_service['values'] %}
+                      {{ item }},
+                    {% endfor %}],
+            spanGaps: false
+          }]
+        };
+
+        // get chart canvas
+        var ctx = document.getElementById("orders-per-service").getContext("2d");
+        // create the chart using the chart canvas
+        var orders_per_service = new Chart(ctx, {
+          type: 'bar',
+          data: ordersPerServiceChartData,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              yAxes: [{
+                gridLines: {
+                  lineWidth: 1,
+                  color: Charts.colors.gray[900],
+                  zeroLineColor: Charts.colors.gray[900]
+                },
+                ticks: {
+                  beginAtZero: true
+                }
+              }]
+            },
+          }
+        });
+    </script>
+
+    <script>
+        var mostRequestedItemsChartData = {
+        labels : [{% for item in most_requested_items['labels'] %}
+                   "{{ item }}",
+                  {% endfor %}],
+        datasets : [{
+            label: '{{ most_requested_items['legend'] }}',
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: "rgba(75,192,192,0.4)",
+            borderColor: Charts.colors.theme['primary'],
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: Charts.colors.theme['primary'],
+            pointBackgroundColor: "#fff",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+            pointHoverBorderColor: "rgba(220,220,220,1)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data : [{% for item in most_requested_items['values'] %}
+                      {{ item }},
+                    {% endfor %}],
+            spanGaps: false
+          }]
+        };
+
+        // get chart canvas
+        var ctx = document.getElementById("most-requested-items").getContext("2d");
+        // create the chart using the chart canvas
+        var most_requested_items_chart = new Chart(ctx, {
+          type: 'bar',
+          data: mostRequestedItemsChartData,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              yAxes: [{
+                gridLines: {
+                  lineWidth: 1,
+                  color: Charts.colors.gray[900],
+                  zeroLineColor: Charts.colors.gray[900]
+                },
+                ticks: {
+                  beginAtZero: true
+                }
+              }]
+            },
+          }
+        });
+    </script>
+
+    <script>
+        var ordersPerMinuteChartData = {
+        labels : [{% for item in orders_per_minute['labels'] %}
+                   "{{ item }}",
+                  {% endfor %}],
+        datasets : [{
+            label: '{{ orders_per_minute['legend'] }}',
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: "rgba(75,192,192,0.4)",
+            borderColor: Charts.colors.theme['primary'],
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: Charts.colors.theme['primary'],
+            pointBackgroundColor: "#fff",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+            pointHoverBorderColor: "rgba(220,220,220,1)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data : [{% for item in orders_per_minute['values'] %}
+                      {{ item }},
+                    {% endfor %}],
+            spanGaps: false
+          },
+          {
+            label: '{{ orders_per_minute_complete['legend'] }}',
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: "rgba(75,192,192,0.4)",
+            borderColor: Charts.colors.theme['success'],
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: Charts.colors.theme['success'],
+            pointBackgroundColor: "#fff",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+            pointHoverBorderColor: "rgba(220,220,220,1)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data : [{% for item_in_progress in orders_per_minute_complete['values'] %}
+                      {{ item_in_progress }},
+                    {% endfor %}],
+            spanGaps: false
+          }]
+        };
+
+        // get chart canvas
+        var ctx = document.getElementById("orders-per-minute").getContext("2d");
+        // create the chart using the chart canvas
+        var orders_per_minute = new Chart(ctx, {
+          type: 'line',
+          data: ordersPerMinuteChartData,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              yAxes: [{
+                gridLines: {
+                  lineWidth: 1,
+                  color: Charts.colors.gray[900],
+                  zeroLineColor: Charts.colors.gray[900]
+                },
+                ticks: {
+                  beginAtZero: true
+                }
+              }]
+            },
+          }
+        });
+
+    </script>
+
+    <script>
+        var avgTimeToCompletionChartData = {
+        labels : [{% for item in avg_time_to_completion['labels'] %}
+                   "{{ item }}",
+                  {% endfor %}],
+        datasets : [{
+            label: '{{ avg_time_to_completion['legend'] }}',
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: "rgba(75,192,192,0.4)",
+            borderColor: Charts.colors.theme['primary'],
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: Charts.colors.theme['primary'],
+            pointBackgroundColor: "#fff",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+            pointHoverBorderColor: "rgba(220,220,220,1)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data : [{% for item in avg_time_to_completion['values'] %}
+                      {{ item }},
+                    {% endfor %}],
+            spanGaps: false
+          }]
+        };
+
+        // get chart canvas
+        var avg_ctx = document.getElementById("avg-time-to-complete").getContext("2d");
+        // create the chart using the chart canvas
+        var avg_time_to_complete = new Chart(avg_ctx, {
+          type: 'bar',
+          data: avgTimeToCompletionChartData,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              yAxes: [{
+                gridLines: {
+                  lineWidth: 1,
+                  color: Charts.colors.gray[900],
+                  zeroLineColor: Charts.colors.gray[900]
+                },
+                ticks: {
+                  beginAtZero: true
+                }
+              }]
+            },
+          }
+        });
+
+
+
+
+
+
+    </script>
+
+    <script>
+    var itemsPerMinuteChartData = {
+    labels : [{% for item in items_per_minute['labels'] %}
                "{{item}}",
               {% endfor %}],
     datasets : [{
-        label: '{{ chart_data['legend'] }}',
-        fill: true,
+        label: '{{ items_per_minute['legend'] }}',
+        fill: false,
         lineTension: 0.1,
         backgroundColor: "rgba(75,192,192,0.4)",
-        borderColor: "rgba(75,192,192,1)",
+        borderColor: Charts.colors.theme['primary'],
         borderCapStyle: 'butt',
         borderDash: [],
         borderDashOffset: 0.0,
         borderJoinStyle: 'miter',
-        pointBorderColor: "rgba(75,192,192,1)",
+        pointBorderColor: Charts.colors.theme['primary'],
         pointBackgroundColor: "#fff",
         pointBorderWidth: 1,
         pointHoverRadius: 5,
@@ -854,20 +1144,43 @@ var Charts = (function() {
         pointHoverBorderWidth: 2,
         pointRadius: 1,
         pointHitRadius: 10,
-        data : [{% for item in chart_data['values'] %}
-                  {{item}},
+        data : [{% for item in items_per_minute['values'] %}
+                  {{ item }},
+                {% endfor %}],
+        spanGaps: false
+      },
+      {
+        label: '{{ items_per_minute_complete['legend'] }}',
+        fill: false,
+        lineTension: 0.1,
+        backgroundColor: "rgba(75,192,192,0.4)",
+        borderColor: Charts.colors.theme['success'],
+        borderCapStyle: 'butt',
+        borderDash: [],
+        borderDashOffset: 0.0,
+        borderJoinStyle: 'miter',
+        pointBorderColor: Charts.colors.theme['success'],
+        pointBackgroundColor: "#fff",
+        pointBorderWidth: 1,
+        pointHoverRadius: 5,
+        pointHoverBackgroundColor: "rgba(75,192,192,1)",
+        pointHoverBorderColor: "rgba(220,220,220,1)",
+        pointHoverBorderWidth: 2,
+        pointRadius: 1,
+        pointHitRadius: 10,
+        data : [{% for item in items_per_minute_complete['values'] %}
+                  {{ item }},
                 {% endfor %}],
         spanGaps: false
       }]
     };
 
     // get chart canvas
-    var ctx = document.getElementById("myChart").getContext("2d");
-<!--    ctx.height = 350px;-->
+    var ctx = document.getElementById("items-per-minute").getContext("2d");
     // create the chart using the chart canvas
-    var myChart = new Chart(ctx, {
+    var items_per_minute = new Chart(ctx, {
       type: 'line',
-      data: chartData,
+      data: itemsPerMinuteChartData,
       options: {
         responsive: true,
         maintainAspectRatio: false,
@@ -880,40 +1193,39 @@ var Charts = (function() {
             },
             ticks: {
               beginAtZero: true
-<!--              callback: function(value) {-->
-<!--                if (!(value % 10)) {-->
-<!--                  return '$' + value + 'k';-->
-<!--                }-->
-<!--              }-->
             }
           }]
         },
-<!--        scales: {-->
-<!--          yAxes: [{-->
-<!--            ticks: {-->
-<!--              beginAtZero: true-->
-<!--            }-->
-<!--          }]-->
-<!--        }-->
       }
     });
-<!--  }-->
 
-<!--  renderChart(data, labels);-->
-</script>
+
+
+
+
+
+    </script>
 
     <script>
-      setTimeout(function(){
-        window.location.reload(1);
-      }, 5000);
+  setTimeout(function(){
+    window.location.reload(1);
+  }, 5000);
+
+
+
+
+
+
+
+
     </script>
 
     {% include "site_template/footer.html" %}
 
-  </div>
+</div>
 
 {% endblock content %}
 
 {% block javascripts %}
-  {{ super()}}
+{{ super()}}
 {% endblock javascripts %}
