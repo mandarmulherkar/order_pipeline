@@ -191,10 +191,7 @@ if __name__ == "__main__":
                                      json_order['ordered_at'])
                 db.session.add(css_order)
                 db.session.commit()
-                print("#############################")
-                print("## {}".format(css_order.id))
-                print("## {}".format(css_order.name))
-                print("#############################")
+                print("> Received Order #{} for {}".format(css_order.id, css_order.name))
 
                 for item in json_order_items:
                     order_item = OrderItem(css_order.id, item['name'], item['price_per_unit'], item['quantity'])
@@ -202,25 +199,11 @@ if __name__ == "__main__":
                     db.session.commit()
                     menu_item = MenuItem.query.filter_by(name=item['name']).first()
 
-                    print("###################################")
                     job = q.enqueue(JobWorker.process_item, css_order.id, order_item.id, item['quantity'],
                                     menu_item.cook_time,
                                     menu_item.name)
-                    print("## {}".format(job))
-                    print("###################################")
 
-                print("###################################")
                 job = q.enqueue(JobWorker.process, css_order.id)
-                print("## {}".format(job))
-                print("###################################")
-
-                # # Worker Stats
-                # # workers = Worker.all(connection=redis)
-                # workers = Worker.all(queue=q)
-                # for worker in workers:
-                #     print("Worker {} {} {} {}".format(worker.name, worker.successful_job_count,
-                #                                       worker.failed_job_count,
-                #                                       worker.total_working_time))
 
         except TypeError as te:
             print("Waiting for kafka... {}".format(str(te)))

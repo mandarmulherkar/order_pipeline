@@ -78,10 +78,10 @@ def get_count(q):
 
 
 @blueprint.route('/index')
-@login_required
+# @login_required
 def index():
-    if not current_user.is_authenticated:
-        return redirect(url_for('base_blueprint.login'))
+    # if not current_user.is_authenticated:
+    #     return redirect(url_for('base_blueprint.login'))
 
     # Top Stats
     received_query = CssOrder.query.filter()
@@ -120,7 +120,7 @@ def index():
     labels_items_ordered, legend_items_ordered, values_items_ordered = get_most_requested_items(3)
 
     # Get last (4) orders as received
-    last_few_orders_list = get_last_few_orders(4)
+    last_few_orders_list = get_last_few_orders(5)
 
     #  Get most popular service
     most_popular_service = get_popular_service()
@@ -171,9 +171,6 @@ def get_orders_per_service(top_n):
     for service in orders_per_service:
         labels_orders_per_service.append(service[0])
         data_orders_per_service.append(service[1])
-    print("#####################################################")
-    print(data_orders_per_service)
-    print("#####################################################")
     legend_orders_per_service = 'Orders Per Service'
     labels_orders_per_service = labels_orders_per_service
     values_orders_per_service = data_orders_per_service
@@ -193,9 +190,6 @@ def get_most_requested_items(top_n):
     for item in items_ordered:
         labels_items_ordered.append(item[0])
         data_items_ordered.append(item[1])
-    print("#####################################################")
-    print(data_items_ordered)
-    print("#####################################################")
     legend_items_ordered = 'Most Requested Items'
     labels_items_ordered = labels_items_ordered
     values_items_ordered = data_items_ordered
@@ -221,9 +215,6 @@ def get_avg_time_to_completion():
 
         labels_avg_wait_times.append(wait_time[0].strftime("%H:%M:%S"))
         data_avg_wait_times.append(minutes)
-    print("#####################################################")
-    print(data_avg_wait_times)
-    print("#####################################################")
     legend_avg_wait_times = 'Avg. Time To Completion'
     labels_avg_wait_times = labels_avg_wait_times
     values_avg_wait_times = data_avg_wait_times
@@ -235,7 +226,7 @@ def get_popular_item():
                                                       func.count(OrderItem.id).label('total')).group_by(
         OrderItem.name).order_by(desc('total')).limit(1).all()
     if len(most_popular_item) == 0:
-        most_popular_item = 'Cutting onions...'
+        most_popular_item = 'Chopping onions...'
     else:
         most_popular_item = most_popular_item[0].name
     return most_popular_item
@@ -254,8 +245,8 @@ def get_popular_service():
 
 def get_last_few_orders(last_orders):
     last_few_orders = CssOrder.query.filter(or_(
-        CssOrder.status == CssConstants.ORDER_IN_PROGRESS, CssOrder.status == CssConstants.ORDER_COMPLETE)).order_by(
-        CssOrder.created_at.desc()) \
+        CssOrder.status == CssConstants.ORDER_IN_PROGRESS, CssOrder.status == CssConstants.ORDER_COMPLETE)) \
+        .order_by(CssOrder.created_at.desc()) \
         .limit(last_orders) \
         .all()
     last_few_orders_list = []
@@ -263,7 +254,7 @@ def get_last_few_orders(last_orders):
         percent_completion = round((order.completed_items_in_order / float(order.items_in_order)) * 100, 2)
         last_few_orders_list.append(
             {"id": order.id, "name": order.name, "status": order.status, "percent_completion": str(percent_completion),
-             "service": order.service})
+             "service": order.service, "created_at": order.created_at.strftime("%Y-%m-%d %H:%M:%S")})
     return last_few_orders_list
 
 
@@ -343,8 +334,8 @@ def get_orders_per_minute_complete():
 
 @blueprint.route('/<template>')
 def route_template(template):
-    if not current_user.is_authenticated:
-        return redirect(url_for('base_blueprint.login'))
+    # if not current_user.is_authenticated:
+    #     return redirect(url_for('base_blueprint.login'))
 
     try:
 

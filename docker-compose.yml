@@ -9,8 +9,6 @@ services:
       POSTGRES_DB: orders
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-#    volumes:
-#      - postgres_data:/var/lib/postgresql/data/
   redis:
     image: redis
     container_name: redis
@@ -34,52 +32,16 @@ services:
     build: ./order_consumer
     ports:
       - "5001:80"
-#    volumes:
-#      - .:/app
     depends_on:
       - broker
       - zookeeper
       - db
-#    env_file:
-#      - ./order_consumer_old/.env.dev
     environment:
       KAFKA_BROKER_URL: broker:9092
       TRANSACTIONS_TOPIC: queueing.orders
       REDIS_URL: redis://redis:6379
       DATABASE_URL: postgresql://postgres:postgres@db:5432/orders
       APP_SETTINGS: config:DevelopmentConfig
-#  order_processor:
-#    build: ./order_processor
-#    ports:
-#      - "5003:8080"
-#    volumes:
-#      - .:/processor
-#    depends_on:
-#      - broker
-#      - zookeeper
-#      - db
-#    environment:
-#      KAFKA_BROKER_URL: broker:9092
-#      TRANSACTIONS_TOPIC: queueing.orders
-#      REDIS_URL: redis://redis:6379
-  #  order_producer:
-  #    build: ./order_producer
-  #    environment:
-  #      KAFKA_BROKER_URL: broker:9092
-  #      TRANSACTIONS_TOPIC: queueing.orders
-  #  order_receiver:
-  #    build: ./order_receiver
-  #    ports:
-  #      - "5000:5000"
-  #    depends_on:
-  #      - redis
-  #      - db
-  #      - broker
-  #      - zookeeper
-  #    environment:
-  #      KAFKA_BROKER_URL: broker:9092
-  #      TRANSACTIONS_TOPIC: queueing.orders
-  #      REDIS_URL: redis://redis:6379
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     environment:
@@ -94,7 +56,6 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-
   appseed-app:
     restart: always
     env_file: ./flask-dashboard/.env
@@ -103,9 +64,6 @@ services:
       - "5005:5005"
     depends_on:
       - db
-#    networks:
-##      - db_network
-#      - web_network
   nginx:
     restart: always
     image: "nginx:latest"
@@ -113,14 +71,5 @@ services:
       - "85:85"
     volumes:
       - ./nginx:/etc/nginx/conf.d
-#    networks:
-#      - web_network
     depends_on:
       - appseed-app
-#networks:
-##  db_network:
-##    driver: bridge
-#  web_network:
-#    driver: bridge
-#volumes:
-#  postgres_data:
