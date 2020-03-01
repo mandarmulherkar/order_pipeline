@@ -16,7 +16,11 @@ class JobWorker:
 
     @classmethod
     def process_item(cls, order_id, item_id, quantity, cook_time, name):
-        # item.id, item['quantity'], menu_item.cook_time, menu_item.name
+        order_item = OrderItem.query.filter_by(id=item_id).first()
+        order_item.status = CssConstants.ORDER_IN_PROGRESS
+        db.session.add(order_item)
+        db.session.commit()
+
         print("<<<<<< Menu item {}: {}, {}, {}, ".format(item_id, name, quantity, cook_time))
         total_cook_time = int(quantity) * int(cook_time)
         print("Cooking for {}...".format(total_cook_time))

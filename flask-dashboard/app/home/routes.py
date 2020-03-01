@@ -11,7 +11,7 @@ from app import login_manager
 from jinja2 import TemplateNotFound
 from datetime import datetime
 from app import db
-from sqlalchemy.sql import text, func
+from sqlalchemy.sql import text, func, desc
 from sqlalchemy import or_
 import json
 
@@ -118,6 +118,12 @@ def index():
     items_cooked_query = OrderItem.query.filter(OrderItem.status == CssConstants.ORDER_COMPLETE)
     items_cooked_count = get_count(items_cooked_query)
 
+    in_progress_query_orders = CssOrder.query.filter(CssOrder.status == CssConstants.ORDER_IN_PROGRESS)
+    in_progress_count_orders = get_count(in_progress_query_orders)
+
+    in_progress_query_items = OrderItem.query.filter(OrderItem.status == CssConstants.ORDER_IN_PROGRESS)
+    in_progress_count_items = get_count(in_progress_query_items)
+
     # Get last 4 orders as received
     last_few_orders = CssOrder.query.filter(or_(
         CssOrder.status == CssConstants.ORDER_IN_PROGRESS, CssOrder.status == CssConstants.ORDER_COMPLETE)).order_by(
@@ -127,13 +133,38 @@ def index():
     for order in last_few_orders:
         percent_completion = round((order.completed_items_in_order / float(order.items_in_order)) * 100, 2)
         last_few_orders_list.append(
-            {"name": order.name, "status": order.status, "percent_completion": str(percent_completion),
+            {"id": order.id, "name": order.name, "status": order.status, "percent_completion": str(percent_completion),
              "service": order.service})
+
+    #  Get most popular service
+    most_popular_service = CssOrder.query.with_entities(CssOrder.service,
+                                                        func.count(CssOrder.id).label('total')).group_by(
+        CssOrder.service).order_by(desc('total')).limit(1).all()
+
+    if len(most_popular_service) == 0:
+        most_popular_service = 'Turning on the stove...'
+    else:
+        most_popular_service = most_popular_service[0].service + ", " + str(most_popular_service[0].total)
+
+    #  Get most popular item
+    most_popular_item = OrderItem.query.with_entities(OrderItem.name,
+                                                      func.count(OrderItem.id).label('total')).group_by(
+        OrderItem.name).order_by(desc('total')).limit(1).all()
+
+    if len(most_popular_item) == 0:
+        most_popular_item = 'Cutting onions...'
+    else:
+        most_popular_item = most_popular_item[0].name + ", " + str(most_popular_item[0].total)
+
     return render_template('index.html', chart_data={"values": values, "labels": labels, "legend": legend},
                            orders_complete=complete_count, orders_received=received_count,
                            items_total=items_count,
                            items_cooked=items_cooked_count,
-                           last_few_orders_list=last_few_orders_list, length_last_few=len(last_few_orders_list))
+                           orders_in_progress=in_progress_count_orders,
+                           items_in_progress=in_progress_count_items,
+                           last_few_orders_list=last_few_orders_list, length_last_few=len(last_few_orders_list),
+                           most_popular_service=most_popular_service,
+                           most_popular_item=most_popular_item)
 
 
 @blueprint.route('/<template>')
