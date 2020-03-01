@@ -962,7 +962,7 @@ var Charts = (function() {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-              yAxes: [{
+              xAxes: [{
                 gridLines: {
                   lineWidth: 1,
                   color: Charts.colors.gray[900],
@@ -971,6 +971,9 @@ var Charts = (function() {
                 ticks: {
                   beginAtZero: true
                 }
+              }],
+              yAxes: [{
+                stacked: true
               }]
             },
           }
@@ -1112,12 +1115,6 @@ var Charts = (function() {
             },
           }
         });
-
-
-
-
-
-
     </script>
 
     <script>
@@ -1207,17 +1204,9 @@ var Charts = (function() {
     </script>
 
     <script>
-  setTimeout(function(){
-    window.location.reload(1);
-  }, 5000);
-
-
-
-
-
-
-
-
+      setTimeout(function(){
+        window.location.reload(1);
+      }, 5000);
     </script>
 
     {% include "site_template/footer.html" %}

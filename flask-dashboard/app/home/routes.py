@@ -114,10 +114,10 @@ def index():
     labels_avg_time_to_completion, legend_avg_time_to_completion, values_avg_time_to_completion = get_avg_time_to_completion()
 
     # Orders per service, top 5
-    labels_orders_per_service, legend_orders_per_service, values_orders_per_service = get_orders_per_service()
+    labels_orders_per_service, legend_orders_per_service, values_orders_per_service = get_orders_per_service(5)
 
     # Count of items
-    labels_items_ordered, legend_items_ordered, values_items_ordered = get_most_requested_items()
+    labels_items_ordered, legend_items_ordered, values_items_ordered = get_most_requested_items(3)
 
     # Get last (4) orders as received
     last_few_orders_list = get_last_few_orders(4)
@@ -158,13 +158,13 @@ def index():
                            most_popular_item=most_popular_item)
 
 
-def get_orders_per_service():
+def get_orders_per_service(top_n):
     orders_per_service = CssOrder.query \
         .with_entities(CssOrder.service,
                        func.count(CssOrder.id).label('total')) \
         .group_by(CssOrder.service) \
-        .order_by('total') \
-        .limit(5) \
+        .order_by(desc('total')) \
+        .limit(top_n) \
         .all()
     data_orders_per_service = []
     labels_orders_per_service = []
@@ -180,18 +180,18 @@ def get_orders_per_service():
     return labels_orders_per_service, legend_orders_per_service, values_orders_per_service
 
 
-def get_most_requested_items():
+def get_most_requested_items(top_n):
     items_ordered = OrderItem.query \
         .with_entities(OrderItem.name,
                        func.count(OrderItem.id).label('total')) \
         .group_by(OrderItem.name) \
         .order_by(desc('total')) \
-        .limit(5) \
+        .limit(top_n) \
         .all()
     data_items_ordered = []
     labels_items_ordered = []
     for item in items_ordered:
-        labels_items_ordered.append(item[0][0:8])
+        labels_items_ordered.append(item[0])
         data_items_ordered.append(item[1])
     print("#####################################################")
     print(data_items_ordered)
@@ -215,7 +215,7 @@ def get_avg_time_to_completion():
     labels_avg_wait_times = []
     for wait_time in avg_wait_times_per_minute:
         seconds = wait_time[1].seconds % 60
-        minutes = (wait_time[1].seconds // 60) % 60
+        minutes = round((wait_time[1].seconds / 60) % 60, 2)
         hours = (wait_time[1].seconds // 3600) % 24
         days = wait_time[1].days
 
