@@ -90,19 +90,30 @@ def index():
     # query = query.columns(CssOrder.completed_at)
 
     css_order = CssOrder.query.with_entities(func.date_trunc('minute', CssOrder.created_at),
-                                             func.count(CssOrder.name)).group_by(
-        func.date_trunc('minute', CssOrder.created_at)).limit(10).all()
+                                             func.count(CssOrder.id)).group_by(
+        func.date_trunc('minute', CssOrder.created_at)).order_by(
+        func.date_trunc('minute', CssOrder.created_at)).limit(8).all()
 
     data = []
+    labels = []
     for order in css_order:
+        labels.append(order[0].strftime("%H:%M:%S"))
         data.append(order[1])
+
+    #
+    # if len(data) < 8:
+    #     for i in range(len(data), 8):
+    #         data.append(0)
+
     print(data)
-    print(str(data))
+    print(labels)
     # css_order = CssOrder.query.from_statement(query).all()
 
-    legend = 'Monthly Data'
-    labels = ["January", "February", "March", "April", "May", "June", "July", "August"]
-    values = [10, 9, 8, 7, 6, 4, 7, 8]
+    legend = 'Orders per minute'
+    labels = labels
+    # ["January", "February", "March", "April", "May", "June", "July", "August"]
+    values = data
+    # [10, 9, 8, 7, 6, 4, 7, 8]
 
     # Top Stats
     # Top Stats
