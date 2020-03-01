@@ -64,6 +64,9 @@ services:
       - "5005:5005"
     depends_on:
       - db
+      - broker
+      - order_consumer
+      - order_producer
   nginx:
     restart: always
     image: "nginx:latest"

@@ -7,6 +7,7 @@ License: MIT
 
 from tests.test_base import check_pages, check_blueprints
 
+
 @check_pages('/', '/home/index')
 def test_pages(base_client):
     # do something

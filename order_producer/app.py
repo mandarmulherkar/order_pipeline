@@ -42,7 +42,7 @@ if __name__ == "__main__":
             message: str = json.dumps(order)
             producer.send(TRANSACTIONS_TOPIC, value=message)
             print(order)
-            sleep(randint(1, 2))
+            # sleep(randint(1, 2))
             order_index = order_index + 1
         except NoBrokersAvailable:
             print("Will try again")

@@ -1,18 +1,13 @@
 #!/usr/bin/env python3
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from kafka import KafkaConsumer
 from redis import Redis
 from rq import Queue, Worker
-from datetime import datetime
 import psycopg2
 import os
 import json
 import logging
 import ast
 import threading
-from sys import modules
-from os.path import basename, splitext
 
 from job_worker import JobWorker
 from wsgi import app, db
@@ -20,23 +15,8 @@ from css_order import CssOrder
 from menu_item import MenuItem
 from order_item import OrderItem
 
-# def enqueueable(func):
-#     if func.__module__ == "__main__":
-#         func.__module__, _ = splitext(basename(modules["__main__"].__file__))
-#     return func
-#
-#
-# @enqueueable
-# def process(order_id):
-#     print(">>>>>>>>>>>>>>> RQ Processing item {}".format(order_id))
-#
-
-# app = Flask(__name__)
-# app.config.from_object("config.Config")
-# db = SQLAlchemy(app)
-
 redis_conn = Redis(host='redis', port=6379)
-# q = Queue('order_queue', connection=redis_conn, is_async=False)
+# is_async=False
 q = Queue('order_queue', connection=redis_conn)
 
 redis = Redis(host='redis', port=6379)
@@ -44,67 +24,6 @@ redis = Redis(host='redis', port=6379)
 redis.flushall()
 KAFKA_BROKER_URL = os.environ.get('KAFKA_BROKER_URL')
 TRANSACTIONS_TOPIC = os.environ.get('TRANSACTIONS_TOPIC')
-
-
-# class CssConstants:
-#     ORDER_RECEIVED = "order_received"
-
-
-# class CssOrder(db.Model):
-#     __tablename__ = 'received_order'
-#
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String())
-#     service = db.Column(db.String())
-#     status = db.Column(db.String())
-#     items_in_order = db.Column(db.Integer())
-#     ordered_at = db.Column(db.DateTime())
-#     created_at = db.Column(db.DateTime(), default=datetime.utcnow)
-#
-#     def __init__(self, name, service, items_in_order, ordered_at, status=CssConstants.ORDER_RECEIVED):
-#         self.name = name
-#         self.service = service
-#         self.items_in_order = items_in_order
-#         self.ordered_at = datetime.strptime(ordered_at, "%Y-%m-%dT%H:%M:%S")
-#         self.status = status
-#
-#     def __repr__(self):
-#         return '<id {}>'.format(self.id)
-
-
-# class MenuItem(db.Model):
-#     __tablename__ = 'menu_item'
-#
-#     id = db.Column(db.Integer, primary_key=True)
-#     cook_time = db.Column(db.Integer)
-#     name = db.Column(db.String())
-#
-#     def __init__(self, name, cook_time):
-#         self.cook_time = cook_time
-#         self.name = name
-#
-#     def __repr__(self):
-#         return '<name: {}, cook_time {}>'.format(self.name, self.cook_time)
-
-
-# class OrderItem(db.Model):
-#     __tablename__ = 'order_item'
-#
-#     id = db.Column(db.Integer, primary_key=True)
-#     order_id = db.Column(db.Integer, db.ForeignKey('received_order.id'))
-#     name = db.Column(db.String())
-#     price_per_unit = db.Column(db.Integer)
-#     quantity = db.Column(db.Integer)
-#     created_at = db.Column(db.DateTime(), default=datetime.utcnow)
-#
-#     def __init__(self, order_id, name, price_per_unit, quantity):
-#         self.order_id = order_id
-#         self.name = name
-#         self.price_per_unit = price_per_unit
-#         self.quantity = quantity
-#
-#     def __repr__(self):
-#         return '<order_id: {}, id {}>'.format(self.order_id, self.id)
 
 
 def setup_database():
@@ -173,7 +92,6 @@ if __name__ == "__main__":
             except:
                 print("Trying to connect to Kafka")
 
-        # while True:
         try:
             print("Trying to read messages")
             for message in consumer:

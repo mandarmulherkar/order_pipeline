@@ -24,7 +24,7 @@ class JobWorker:
         print("<<<<<< Menu item {}: {}, {}, {}, ".format(item_id, name, quantity, cook_time))
         total_cook_time = int(quantity) * int(cook_time)
         print("Cooking for {}...".format(total_cook_time))
-        sleep(total_cook_time / 100)
+        # sleep(total_cook_time / 100)
         print("{} x {} ready".format(quantity, name))
 
         # css_order = CssOrder.query.filter_by(id=order_id).first()

@@ -38,5 +38,4 @@ app.config.from_object("config.Config")
 db = SQLAlchemy(app)
 
 if __name__ == "__main__":
-    print("I AM HEREEEEEEEEEEEEEEEEE in wsgi")
-    # app.run()
+    print("Starting in wsgi")
