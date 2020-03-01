@@ -14,6 +14,11 @@ KAFKA_BROKER_URL = os.environ.get('KAFKA_BROKER_URL')
 TRANSACTIONS_TOPIC = os.environ.get('TRANSACTIONS_TOPIC')
 
 
+@app.route('/')
+def hello_world():
+    return 'Hello, World!'
+
+
 def check_stream_available():
     global producer
     while True:
@@ -25,15 +30,10 @@ def check_stream_available():
             print("Waiting for kafka...")
 
 
-if __name__ == "__main__":
+def produce_orders(filename: str):
     # Read orders from data file.
-    with open('data/orders.json') as f:
+    with open(filename) as f:
         data = json.load(f)
-
-    #  Check Kafka is available
-    check_stream_available()
-    # Add a time delay to give time for the consumer to be ready.
-    time.sleep(3)
 
     order_index = 0
     while True:
@@ -49,3 +49,12 @@ if __name__ == "__main__":
         except IndexError:
             print("No more orders!")
             break
+
+
+if __name__ == "__main__":
+    # Check Kafka is available
+    check_stream_available()
+    # Add a time delay for the consumer to be ready.
+    time.sleep(3)
+
+    produce_orders('data/orders-subset-small.json')
