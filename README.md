@@ -13,3 +13,8 @@ docker-compose up
 Check the Dashboard
 
 http://localhost:5005/index
+
+
+Bring down services
+
+docker-compose down
