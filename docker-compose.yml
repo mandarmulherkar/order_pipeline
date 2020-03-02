@@ -58,7 +58,7 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
   appseed-app:
     restart: always
-    env_file: ./flask-dashboard/.env
+#    env_file: ./flask-dashboard/.env
     build: ./flask-dashboard
     ports:
       - "5005:5005"
