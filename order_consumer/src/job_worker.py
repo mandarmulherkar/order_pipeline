@@ -1,10 +1,18 @@
 from time import sleep
 from datetime import datetime
-from menu_item import MenuItem
-from css_order import CssOrder
-from order_item import OrderItem
-from css_constants import CssConstants
-from wsgi import db
+import sys
+
+if hasattr(sys, '_called_from_test'):
+    from .css_order import CssOrder
+    from .order_item import OrderItem
+    from .css_constants import CssConstants
+    from .wsgi import db
+else:
+    from css_order import CssOrder
+    from order_item import OrderItem
+    from css_constants import CssConstants
+    from wsgi import db
+COOKING_SPEED = 10
 
 
 class JobWorker:
@@ -22,7 +30,7 @@ class JobWorker:
         print("Menu item {}: {}, {}, {}, ".format(item_id, name, quantity, cook_time))
         total_cook_time = int(quantity) * int(cook_time)
         print("Cooking for {}...".format(total_cook_time))
-        sleep(total_cook_time / 100)
+        sleep(total_cook_time / COOKING_SPEED)
         print("{} x {} ready".format(quantity, name))
 
         order_item = OrderItem.query.filter_by(id=item_id).first()

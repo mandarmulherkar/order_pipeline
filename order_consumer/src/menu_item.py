@@ -1,4 +1,9 @@
-from wsgi import db
+import sys
+
+if hasattr(sys, '_called_from_test'):
+    from .wsgi import db
+else:
+    from wsgi import db
 
 
 class MenuItem(db.Model):

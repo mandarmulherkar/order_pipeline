@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-
+import logging
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -12,7 +12,11 @@ class Config(object):
     TESTING = False
     CSRF_ENABLED = True
     SECRET_KEY = 'postgres'
-    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+    try:
+        SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+    except KeyError:
+        os.environ["DATABASE_URL"] = 'postgresql://postgres:postgres@db:5432/orders'
+        SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
 
 
 class ProductionConfig(Config):
@@ -34,7 +38,11 @@ class TestingConfig(Config):
 
 
 app = Flask(__name__)
-app.config.from_object("config.Config")
+try:
+    app.config.from_object("config.Config")
+except:
+    logging.error("Could not import Config!")
+
 db = SQLAlchemy(app)
 
 if __name__ == "__main__":

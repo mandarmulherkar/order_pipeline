@@ -2,7 +2,7 @@ import pytest
 import os
 import app
 
-os.environ["DATABASE_URL"] = "postgres://db:5432"
+os.environ["DATABASE_URL"] = 'postgresql://postgres:postgres@db:5432/orders'
 
 
 @pytest.fixture(scope='module')

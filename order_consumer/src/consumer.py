@@ -2,26 +2,37 @@
 from kafka import KafkaConsumer
 from redis import Redis
 from rq import Queue, Worker
+# Need pip install psycopg2-binary
 import psycopg2
 import os
 import json
-import logging
 import ast
 import threading
+from datetime import datetime
 
-from job_worker import JobWorker
-from wsgi import app, db
-from css_order import CssOrder
-from menu_item import MenuItem
-from order_item import OrderItem
+import sys
 
-redis_conn = Redis(host='redis', port=6379)
-# is_async=False
-q = Queue('order_queue', connection=redis_conn)
+if hasattr(sys, '_called_from_test'):
+    from .job_worker import JobWorker
+    from .wsgi import app, db
+    from .css_order import CssOrder
+    from .menu_item import MenuItem
+    from .order_item import OrderItem
 
-redis = Redis(host='redis', port=6379)
-# Do not want workers to pick up old jobs, since these have id arguments.
-redis.flushall()
+    print("Not initializing redis for pytest")
+else:
+    from job_worker import JobWorker
+    from wsgi import app, db
+    from css_order import CssOrder
+    from menu_item import MenuItem
+    from order_item import OrderItem
+
+    redis_conn = Redis(host='redis', port=6379)
+    q = Queue('order_queue', connection=redis_conn)
+
+    # Do not want workers to pick up old jobs, since these have database ids as arguments.
+    redis_conn.flushall()
+
 KAFKA_BROKER_URL = os.environ.get('KAFKA_BROKER_URL')
 TRANSACTIONS_TOPIC = os.environ.get('TRANSACTIONS_TOPIC')
 
@@ -55,6 +66,7 @@ def setup_database():
             conn.close()
             print('Database connection closed.')
 
+    # In case of exceptions, use the sqlalchmey api.
     db.drop_all()
     db.create_all()
 
@@ -68,6 +80,33 @@ def start_new_thread(function):
         t.start()
 
     return decorator
+
+
+def read_order(order):
+    """
+    Read the order and verify it can be parsed.
+    :param order: The order dictionary from kafka.
+    :return: The order in json format.
+    """
+    current_order = ast.literal_eval(order)
+    # Validate
+    try:
+        current_order['name']
+        current_order['ordered_at']
+        current_order['items']
+        current_order['service']
+        try:
+            ordered_at = datetime.strptime(current_order['ordered_at'], "%Y-%m-%dT%H:%M:%S")
+        except ValueError:
+            try:
+                ordered_at = datetime.strptime(current_order['ordered_at'], "%Y-%m-%dT%H:%M:%S.%f")
+            except ValueError:
+                return None
+        assert len(current_order['items']) > 0
+    except (KeyError, AssertionError):
+        return None
+
+    return current_order
 
 
 if __name__ == "__main__":
@@ -93,12 +132,14 @@ if __name__ == "__main__":
                 print("Trying to connect to Kafka")
 
         try:
-            print("Trying to read messages")
+            print("Starting to read messages")
             for message in consumer:
                 order: dict = message.value
-                logging.info("Received message {}".format(message))
-                json_order = ast.literal_eval(message.value)
-                print(json_order)
+                json_order = read_order(order)
+
+                if not json_order:
+                    continue
+
                 # Items from the order
                 json_order_items = json_order['items']
                 items_in_order = 0

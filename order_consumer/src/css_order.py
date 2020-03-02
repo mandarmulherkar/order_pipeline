@@ -1,6 +1,12 @@
-from wsgi import db
 from datetime import datetime
-from css_constants import CssConstants
+import sys
+
+if hasattr(sys, '_called_from_test'):
+    from .css_constants import CssConstants
+    from .wsgi import db
+else:
+    from css_constants import CssConstants
+    from wsgi import db
 
 
 class CssOrder(db.Model):
