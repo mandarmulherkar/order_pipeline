@@ -1,6 +1,6 @@
 # order_pipeline
 
-Build all the service
+Build all the services
 
 docker-compose build
 
