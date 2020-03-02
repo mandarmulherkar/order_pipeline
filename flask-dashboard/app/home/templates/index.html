@@ -190,15 +190,15 @@
                 <div class="card-header bg-transparent">
                     <div class="row align-items-center">
                         <div class="col">
-                            <h6 class="text-uppercase text-muted ls-1 mb-1">Avg. Time Delay</h6>
-                            <h2 class="mb-0">Avg. time delay to complete orders</h2>
+                            <h6 class="text-uppercase text-muted ls-1 mb-1">Orders</h6>
+                            <h2 class="mb-0">Total orders received per minute</h2>
                         </div>
                     </div>
                 </div>
                 <div class="card-body">
                     <!-- Chart -->
                     <div class="chart">
-                        <canvas id="avg-time-to-complete" class="chart-canvas"></canvas>
+                        <canvas id="orders-per-minute" class="chart-canvas"></canvas>
                     </div>
                 </div>
             </div>
@@ -209,8 +209,8 @@
                 <div class="card-header bg-transparent">
                     <div class="row align-items-center">
                         <div class="col">
-                            <h6 class="text-uppercase text-muted ls-1 mb-1">Performance</h6>
-                            <h2 class="mb-0">Total orders</h2>
+                            <h6 class="text-uppercase text-muted ls-1 mb-1">Items</h6>
+                            <h2 class="mb-0">Total items requested per minute</h2>
                         </div>
                     </div>
                 </div>
@@ -228,19 +228,20 @@
                 <div class="card-header bg-transparent">
                     <div class="row align-items-center">
                         <div class="col">
-                            <h6 class="text-uppercase text-muted ls-1 mb-1">Performance</h6>
-                            <h2 class="mb-0">Total orders</h2>
+                            <h6 class="text-uppercase text-muted ls-1 mb-1">Avg. Time Delay</h6>
+                            <h2 class="mb-0">Avg. time delay to complete orders</h2>
                         </div>
                     </div>
                 </div>
                 <div class="card-body">
                     <!-- Chart -->
                     <div class="chart">
-                        <canvas id="orders-per-minute" class="chart-canvas"></canvas>
+                        <canvas id="avg-time-to-complete" class="chart-canvas"></canvas>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 
@@ -253,7 +254,7 @@
                     <div class="row align-items-center">
                         <div class="col">
                             <h6 class="text-uppercase text-muted ls-1 mb-1">Orders Per Service</h6>
-                            <h2 class="mb-0">Orders Per Service</h2>
+                            <h2 class="mb-0">Total received orders by service name</h2>
                         </div>
                     </div>
                 </div>
@@ -271,8 +272,8 @@
                 <div class="card-header bg-transparent">
                     <div class="row align-items-center">
                         <div class="col">
-                            <h6 class="text-uppercase text-muted ls-1 mb-1">Orders Per Service</h6>
-                            <h2 class="mb-0">Orders Per Service</h2>
+                            <h6 class="text-uppercase text-muted ls-1 mb-1">Ordered Items</h6>
+                            <h2 class="mb-0">Most Popular items</h2>
                         </div>
                     </div>
                 </div>
@@ -295,7 +296,7 @@
         <div class="col">
             <div class="card shadow">
                 <div class="card-header border-0">
-                    <h3 class="mb-0">Orders</h3>
+                    <h3 class="mb-0">Last Few Orders Status</h3>
                 </div>
                 <div class="table-responsive">
                     <table class="table align-items-center table-flush">
@@ -798,6 +799,9 @@ var Charts = (function() {
 
 
 
+
+
+
     </script>
 
     <script>
@@ -854,6 +858,9 @@ var Charts = (function() {
             },
           }
         });
+
+
+
 
     </script>
 
@@ -914,6 +921,9 @@ var Charts = (function() {
             },
           }
         });
+
+
+
 
     </script>
 
@@ -997,6 +1007,9 @@ var Charts = (function() {
         });
 
 
+
+
+
     </script>
 
     <script>
@@ -1053,6 +1066,9 @@ var Charts = (function() {
             },
           }
         });
+
+
+
 
     </script>
 
@@ -1141,12 +1157,18 @@ var Charts = (function() {
 
 
 
+
+
+
     </script>
 
     <script>
       setTimeout(function(){
         window.location.reload(1);
       }, 5000);
+
+
+
 
     </script>
 

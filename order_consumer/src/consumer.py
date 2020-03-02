@@ -71,7 +71,7 @@ def start_new_thread(function):
 
 
 if __name__ == "__main__":
-    print("consumer >> I am in CONSUMER")
+    print("Starting consumer...")
     if setup_database():
 
         # First, set up the menu items.
