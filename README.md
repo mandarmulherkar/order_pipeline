@@ -19,3 +19,9 @@ Bring down services
 
 docker-compose down
 
+Redis - docker exec -it <redis> bash
+
+Postgres - docker exec -it <redis> bash
+  - psql -U postgres
+  - \c orders
+  - \dt
