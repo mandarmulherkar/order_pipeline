@@ -132,4 +132,4 @@ dmypy.json
 venv
 venv/*
 .DS_Store
-
+.vscode/

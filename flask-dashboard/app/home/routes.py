@@ -128,6 +128,12 @@ def index():
     #  Get most popular item
     most_popular_item = get_popular_item()
 
+    # Get average time per order
+    avg_time_per_order = get_avg_completion_time_per_order()
+
+    # # Get average time per item
+    # avg_time_per_item = get_avg_completion_time_per_item()
+
     return render_template('index.html',
                            orders_per_minute={"values": values_orders_per_minute, "labels": labels_orders_per_minute,
                                               "legend": legend_orders_per_minute},
@@ -155,7 +161,8 @@ def index():
                            items_in_progress=in_progress_count_items,
                            last_few_orders_list=last_few_orders_list, length_last_few=len(last_few_orders_list),
                            most_popular_service=most_popular_service,
-                           most_popular_item=most_popular_item)
+                           most_popular_item=most_popular_item,
+                           avg_time_per_order=avg_time_per_order)
 
 
 def get_orders_per_service(top_n):
@@ -195,6 +202,49 @@ def get_most_requested_items(top_n):
     values_items_ordered = data_items_ordered
     return labels_items_ordered, legend_items_ordered, values_items_ordered
 
+def get_avg_completion_time_per_item():
+    avg_time_per_order = OrderItem.query \
+        .with_entities(func.date_trunc('minute', OrderItem.created_at),
+                       func.avg(OrderItem.completed_at - OrderItem.created_at).label('average')) \
+        .filter(OrderItem.status == CssConstants.ORDER_COMPLETE) \
+        .group_by(func.date_trunc('minute', OrderItem.created_at)) \
+        .order_by(func.date_trunc('minute', OrderItem.created_at)) \
+        .limit(15) \
+        .all()
+    data_avg_wait_times = []
+    labels_avg_wait_times = []
+    for wait_time in avg_wait_times_per_minute:
+        seconds = wait_time[1].seconds % 60
+        minutes = round((wait_time[1].seconds / 60) % 60, 2)
+        hours = (wait_time[1].seconds // 3600) % 24
+        days = wait_time[1].days
+
+        labels_avg_wait_times.append(wait_time[0].strftime("%H:%M:%S"))
+        data_avg_wait_times.append(minutes)
+    legend_avg_wait_times = 'Avg. Time To Completion'
+    labels_avg_wait_times = labels_avg_wait_times
+    values_avg_wait_times = data_avg_wait_times
+    return labels_avg_wait_times, legend_avg_wait_times, values_avg_wait_times
+
+def get_avg_completion_time_per_order():
+    avg_time_per_order = CssOrder.query \
+        .with_entities(CssOrder.service, func.avg(CssOrder.completed_at - CssOrder.created_at).label('average')) \
+        .filter(OrderItem.status == CssConstants.ORDER_COMPLETE) \
+        .group_by(CssOrder.service) \
+        .order_by('average') \
+        .limit(3) \
+        .all()
+
+    avg_times = []
+    for order in avg_time_per_order:
+        if order[1]:
+            seconds = order[1].seconds % 60
+            minutes = round((order[1].seconds / 60) % 60, 2)
+            hours = (order[1].seconds // 3600) % 24
+            days = order[1].days
+            avg_times.append({order[0]: "{}:{}:{}".format(hours, minutes, seconds)})
+
+    return avg_times
 
 def get_avg_time_to_completion():
     avg_wait_times_per_minute = OrderItem.query \
